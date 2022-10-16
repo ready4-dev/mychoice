@@ -1,0 +1,13 @@
+#usethis::create_package(getwd())
+usethis::use_package("dplyr")
+usethis::use_package("idefix")
+usethis::use_package("janitor")
+usethis::use_package("lubridate")
+usethis::use_package("magrittr")
+usethis::use_package("purrr")
+usethis::use_package("rlang")
+usethis::use_package("rnaturalearth")
+usethis::use_package("sf")
+usethis::use_package("stringr")
+devtools::document()
+
