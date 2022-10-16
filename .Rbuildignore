@@ -24,3 +24,5 @@
 ^\.github$
 ^initial_setup\.R$
 ^data-raw/OLD_FNS/pckg_ready4choice\.R$
+^.*\.Rproj$
+^\.Rproj\.user$

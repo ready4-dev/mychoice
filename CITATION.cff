@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-message: "Matthew Hamilton  (2022). mychoice: Model Youth Choice Behaviours. Version 0.0.0.9012. Zenodo. https://doi.org/10.5281/zenodo.5606250"
+message: "Matthew Hamilton  (2022). mychoice: Model Youth Choice Behaviours. Version 0.0.0.9013. Zenodo. https://doi.org/10.5281/zenodo.5606250"
 authors:
   - family-names: "Hamilton"
     given-names: "Matthew"
 title: "mychoice: Model Youth Choice Behaviours"
-version: 0.0.0.9012
+version: 0.0.0.9013
 doi: 10.5281/zenodo.5606250
 date-released: 2022-10-17
 url: "https://ready4-dev.github.io/mychoice/"
