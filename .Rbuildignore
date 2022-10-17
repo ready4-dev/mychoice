@@ -26,3 +26,7 @@
 ^data-raw/OLD_FNS/pckg_ready4choice\.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^mychoice\.Rproj$
+^data-raw$
+^doc$
+^Meta$

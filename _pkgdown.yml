@@ -8,6 +8,8 @@ home:
   links:
   - text: Manual - Developer (PDF)
     href: https://github.com/ready4-dev/mychoice/releases/download/Documentation_0.0/mychoice_Developer.pdf
+  - text: Manual - User (PDF)
+    href: https://github.com/ready4-dev/mychoice/releases/download/Documentation_0.0/mychoice_User.pdf
   - text: Framework
     href:  https://www.ready4-dev.com/
 development:

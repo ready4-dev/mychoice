@@ -60,6 +60,4 @@ ready4::write_citation_cff(packageDescription("mychoice"),
                            citation_chr = readLines("inst/CITATION"))
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
-# usethis::use_package("truncnorm")
 # devtools::build_vignettes()
-
