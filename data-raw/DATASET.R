@@ -58,10 +58,8 @@ z <- ready4pack::make_pt_ready4pack_manifest(x) %>%
 z <- ready4::author(z)
 ready4::write_citation_cff(packageDescription("mychoice"),
                            citation_chr = readLines("inst/CITATION"))
-# usethis::use_dev_package("TTU",
-#                          type = "Depends",
-#                          remote = "ready4-dev/TTU")
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
 # usethis::use_package("truncnorm")
 # devtools::build_vignettes()
+
