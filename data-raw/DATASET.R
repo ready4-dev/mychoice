@@ -61,3 +61,4 @@ ready4::write_citation_cff(packageDescription("mychoice"),
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
 # devtools::build_vignettes()
+# Note, on initial setup ran commands from: https://usethis.r-lib.org/reference/use_pkgdown.html
