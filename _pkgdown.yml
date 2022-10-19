@@ -1,37 +1,4 @@
-url: https://ready4-dev.github.io/mychoice/
-
+url: ~
 template:
   bootstrap: 5
-  bootswatch: journal
 
-home:
-  links:
-  - text: Manual - Developer (PDF)
-    href: https://github.com/ready4-dev/mychoice/releases/download/Documentation_0.0/mychoice_Developer.pdf
-  - text: Manual - User (PDF)
-    href: https://github.com/ready4-dev/mychoice/releases/download/Documentation_0.0/mychoice_User.pdf
-  - text: Framework
-    href:  https://www.ready4-dev.com/
-development:
-  mode: auto
-reference:
-- title: "Functions"
-- contents:
-  - add_age_and_area_cmprsns
-  - add_analysis
-  - add_choice_mdls
-  - add_cost_comparison
-  - add_cut_pnts_cmprsn
-  - add_flags
-  - add_new_choice_cmprsn
-  - make_case_choices_mat
-  - make_choice_mdlng_ds
-  - make_choice_smrys
-  - make_flags_smry_ls
-  - make_mdl_params_ls
-  - make_smry_tb
-  - remove_no_choice_responses
-  - remove_red_flag_cases
-  - transform_repln_ds_for_analysis
-  - write_choice_mdlng_ws
-  - write_preprocessing_outp
