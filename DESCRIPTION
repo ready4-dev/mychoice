@@ -15,7 +15,8 @@ Description: Tools for modelling the choice behaviours of young people
     (matthew.hamilton@orygen.org.au).
 License: GPL-3 + file LICENSE
 URL: https://ready4-dev.github.io/mychoice/,
-    https://github.com/ready4-dev/mychoice, https://www.ready4-dev.com/
+    https://github.com/ready4-dev/mychoice,
+    https://www.ready4-dev.com/
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
