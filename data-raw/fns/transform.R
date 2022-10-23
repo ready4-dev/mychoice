@@ -11,6 +11,7 @@ transform_repln_ds_for_analysis <- function(repln_ds_tb,
                                             consent_1L_chr = "",
                                             person_uid_var_nm_1L_chr = "person_uid",
                                             seifa_lup = NULL,
+                                            set_idx_1L_int = 2L,
                                             write_to_1L_chr = character(0)){
   if(identical(write_to_1L_chr, character(0)))
     write_to_1L_chr <- tempdir()
@@ -89,7 +90,7 @@ transform_repln_ds_for_analysis <- function(repln_ds_tb,
                                                                                                                              target_var_nm_1L_chr = "quartile_dbl")),
                                                                                              NA_character_)) %>% as.factor()) %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(der_Missing_Tasks = sum(is.na(dplyr::c_across(dplyr::starts_with(records_ls$choice_vars_pfx_1L_chr)))) - length(dce_design_ls$block_indcs_ls$block_1_int )) %>%
+    dplyr::mutate(der_Missing_Tasks = sum(is.na(dplyr::c_across(dplyr::starts_with(records_ls$choice_vars_pfx_1L_chr)))) - length(dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_idxs_ls[[1]])) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(der_All_Tasks = der_Missing_Tasks == 0)
   tfd_repln_ds_tb <- tfd_repln_ds_tb %>%

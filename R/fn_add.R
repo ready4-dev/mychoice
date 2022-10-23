@@ -449,6 +449,134 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
         is_pc_1L_lgl = is_pc_1L_lgl)
     return(prpn_cmprsns_ls)
 }
+#' Add design specification
+#' @description add_design_spec() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add design specification. Function argument dce_design_ls specifies the object to be updated. The function returns Discrete choice experiment design (a list).
+#' @param dce_design_ls Discrete choice experiment design (a list), Default: list()
+#' @param add_cndt_design_mat Add candidate design (a matrix), Default: F
+#' @param alternatives_chr Alternatives (a character vector), Default: character(0)
+#' @param att_lvls_tb Attribute levels (a tibble), Default: tibble::tibble()
+#' @param block_idxs_ls Block indices (a list), Default: list()
+#' @param cost_att_idx_1L_int Cost attribute index (an integer vector of length one), Default: integer(0)
+#' @param cost_pfx_1L_chr Cost prefix (a character vector of length one), Default: ''
+#' @param cost_sfx_1L_chr Cost suffix (a character vector of length one), Default: ''
+#' @param design_mat Design (a matrix), Default: matrix(numeric(0))
+#' @param draws_1L_int Draws (an integer vector of length one), Default: 10
+#' @param nbr_of_blocks_1L_int Number of blocks (an integer vector of length one), Default: integer(0)
+#' @param nbr_of_sets_1L_int Number of sets (an integer vector of length one), Default: integer(0)
+#' @param opt_out_idx_1L_int Opt out index (an integer vector of length one), Default: integer(0)
+#' @param parallel_1L_lgl Parallel (a logical vector of length one), Default: FALSE
+#' @param pilot_analysis_ls Pilot analysis (a list), Default: NULL
+#' @param priors_dbl Priors (a double vector), Default: numeric(0)
+#' @param priors_idx_1L_int Priors index (an integer vector of length one), Default: integer(0)
+#' @param seed_1L_int Seed (an integer vector of length one), Default: 1987
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
+#' @param start_dsn_mat Start design (a matrix), Default: NULL
+#' @param transform_att_nms_1L_lgl Transform attribute names (a logical vector of length one), Default: T
+#' @return Discrete choice experiment design (a list)
+#' @rdname add_design_spec
+#' @export 
+#' @importFrom tibble tibble
+#' @importFrom idefix Profiles
+#' @importFrom purrr map
+#' @importFrom stats setNames
+#' @keywords internal
+add_design_spec <- function (dce_design_ls = list(), add_cndt_design_mat = F, alternatives_chr = character(0), 
+    att_lvls_tb = tibble::tibble(), block_idxs_ls = list(), cost_att_idx_1L_int = integer(0), 
+    cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", design_mat = matrix(numeric(0)), 
+    draws_1L_int = 10L, nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
+    opt_out_idx_1L_int = integer(0), parallel_1L_lgl = FALSE, 
+    pilot_analysis_ls = NULL, priors_dbl = numeric(0), priors_idx_1L_int = integer(0), 
+    seed_1L_int = 1987, set_idx_1L_int = integer(0), start_dsn_mat = NULL, 
+    transform_att_nms_1L_lgl = T) 
+{
+    if (is.null(dce_design_ls$choice_cards_ls)) {
+        dce_design_ls$choice_cards_ls <- list()
+    }
+    if (is.null(dce_design_ls$choice_sets_ls)) {
+        dce_design_ls$choice_sets_ls <- list(alternatives_chr = alternatives_chr, 
+            att_lvls_tb = att_lvls_tb, nbr_of_blocks_1L_int = nbr_of_blocks_1L_int, 
+            nbr_of_sets_1L_int = nbr_of_sets_1L_int, opt_out_1L_lgl = logical(0), 
+            opt_out_idx_1L_int = integer(0))
+    }
+    if (!identical(alternatives_chr, character(0))) {
+        dce_design_ls$choice_sets_ls$alternatives_chr <- alternatives_chr
+    }
+    if (!identical(att_lvls_tb, tibble::tibble())) {
+        dce_design_ls$choice_sets_ls$att_lvls_tb <- att_lvls_tb
+    }
+    if (!identical(design_mat, matrix(numeric(0)))) {
+        dce_design_ls$design_mat <- design_mat
+    }
+    if (!identical(nbr_of_sets_1L_int, integer(0))) {
+        dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int <- nbr_of_sets_1L_int
+    }
+    if (!identical(nbr_of_blocks_1L_int, integer(0))) {
+        dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int <- nbr_of_blocks_1L_int
+    }
+    if (!identical(opt_out_idx_1L_int, integer(0))) {
+        dce_design_ls$choice_sets_ls$opt_out_idx_1L_int <- opt_out_idx_1L_int
+    }
+    if (!identical(opt_out_idx_1L_int, integer(0))) {
+        dce_design_ls$choice_sets_ls$opt_out_1L_lgl <- ifelse(is.na(dce_design_ls$choice_sets_ls$opt_out_idx_1L_int), 
+            F, T)
+    }
+    if (add_cndt_design_mat) {
+        dce_design_ls$cndt_design_mat <- idefix::Profiles(lvls = get_att_smrys(dce_design_ls), 
+            coding = get_att_smrys(dce_design_ls, return_1L_chr = "type"), 
+            c.lvls = get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb, 
+                return_1L_chr = "cont") %>% unname() %>% purrr::map(~as.numeric(.x)))
+    }
+    else {
+        if (is.null(dce_design_ls$cndt_design_mat)) {
+            dce_design_ls$cndt_design_mat <- matrix(numeric(0))
+        }
+    }
+    if (is.null(dce_design_ls$cost_att_idx_1L_int) | !identical(cost_att_idx_1L_int, 
+        integer(0))) {
+        dce_design_ls$cost_att_idx_1L_int <- cost_att_idx_1L_int
+    }
+    if (is.null(dce_design_ls$cost_pfx_1L_chr) | !identical(cost_pfx_1L_chr, 
+        "")) {
+        dce_design_ls$cost_pfx_1L_chr <- cost_pfx_1L_chr
+    }
+    if (is.null(dce_design_ls$cost_sfx_1L_chr) | !identical(cost_sfx_1L_chr, 
+        "")) {
+        dce_design_ls$cost_sfx_1L_chr <- cost_sfx_1L_chr
+    }
+    if (is.null(dce_design_ls$design_mat) | !identical(design_mat, 
+        matrix(numeric(0)))) {
+        dce_design_ls$design_mat <- design_mat
+    }
+    if (is.null(dce_design_ls$efnt_dsn_ls)) {
+        dce_design_ls$efnt_dsn_ls <- list()
+    }
+    if (is.null(dce_design_ls$priors_ls)) {
+        dce_design_ls$priors_ls <- list()
+    }
+    if (!identical(priors_dbl, numeric(0))) {
+        dce_design_ls$priors_ls <- append(dce_design_ls$priors_ls, 
+            list(make_priors_ls(dce_design_ls, priors_dbl = priors_dbl, 
+                draws_1L_int = draws_1L_int, seed_1L_int = seed_1L_int)) %>% 
+                stats::setNames(paste0("Set_", length(dce_design_ls$priors_ls) + 
+                  1)))
+    }
+    if (!identical(priors_idx_1L_int, integer(0))) {
+        dce_design_ls$efnt_dsn_ls <- append(dce_design_ls$efnt_dsn_ls, 
+            list(make_efnt_dsn_mat(dce_design_ls, parallel_1L_lgl = parallel_1L_lgl, 
+                pilot_analysis_ls = pilot_analysis_ls, priors_idx_1L_int = priors_idx_1L_int, 
+                start_dsn_mat = start_dsn_mat)) %>% stats::setNames(paste0("Set_", 
+                length(dce_design_ls$efnt_dsn_ls) + 1)))
+    }
+    if (!identical(set_idx_1L_int, integer(0))) {
+        dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls, 
+            list(make_choice_cards(dce_design_ls, block_idxs_ls = block_idxs_ls, 
+                seed_1L_int = seed_1L_int, set_idx_1L_int = set_idx_1L_int, 
+                transform_att_nms_1L_lgl = transform_att_nms_1L_lgl)) %>% 
+                stats::setNames(paste0("Set_", length(dce_design_ls$choice_cards_ls) + 
+                  1)))
+    }
+    return(dce_design_ls)
+}
 #' Add duplicate text red flag
 #' @description add_duplicate_text_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add duplicate text red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)

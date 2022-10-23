@@ -1,3 +1,28 @@
+#' Get attribute summarys
+#' @description get_att_smrys() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attribute summarys. Function argument dce_design_ls specifies the where to look for the required object. The function returns Return (an output object of multiple potential types).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param return_1L_chr Return (a character vector of length one), Default: 'levels'
+#' @return Return (an output object of multiple potential types)
+#' @rdname get_att_smrys
+#' @export 
+#' @importFrom dplyr group_by summarise n first
+#' @importFrom purrr map flatten_int flatten_chr
+#' @importFrom ready4 get_from_lup_obj
+#' @keywords internal
+get_att_smrys <- function (dce_design_ls, return_1L_chr = "levels") 
+{
+    att_smry_tb <- dce_design_ls$choice_sets_ls$att_lvls_tb %>% 
+        dplyr::group_by(attribute_chr) %>% dplyr::summarise(levels = dplyr::n(), 
+        type = dplyr::first(continuous_lgl) %>% ifelse("C", "D"))
+    return_xx <- get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb) %>% 
+        purrr::map(~ready4::get_from_lup_obj(att_smry_tb, match_var_nm_1L_chr = "attribute_chr", 
+            match_value_xx = .x, target_var_nm_1L_chr = return_1L_chr))
+    if (return_1L_chr == "levels") 
+        return_xx <- return_xx %>% purrr::flatten_int()
+    if (return_1L_chr == "type") 
+        return_xx <- return_xx %>% purrr::flatten_chr()
+    return(return_xx)
+}
 #' Get attributes
 #' @description get_atts() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attributes. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Attributes (a character vector).
 #' @param att_lvls_tb Attribute levels (a tibble)
@@ -39,6 +64,24 @@ get_fctr_atts_dummy_var_nms <- function (att_lvls_tb, flatten_1L_lgl = F)
             purrr::flatten_chr()
     }
     return(fctr_atts_dummy_var_nms_xx)
+}
+#' Get levels
+#' @description get_lvls() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get levels. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Levels (a list).
+#' @param att_lvls_tb Attribute levels (a tibble)
+#' @param return_1L_chr Return (a character vector of length one), Default: 'all'
+#' @return Levels (a list)
+#' @rdname get_lvls
+#' @export 
+#' @importFrom purrr map
+#' @importFrom dplyr filter pull
+#' @importFrom stats setNames
+#' @keywords internal
+get_lvls <- function (att_lvls_tb, return_1L_chr = "all") 
+{
+    atts_chr <- get_atts(att_lvls_tb, return_1L_chr = return_1L_chr)
+    lvls_ls <- atts_chr %>% purrr::map(~att_lvls_tb %>% dplyr::filter(attribute_chr == 
+        .x) %>% dplyr::pull(level_chr)) %>% stats::setNames(atts_chr)
+    return(lvls_ls)
 }
 #' Get number of choices
 #' @description get_nbr_of_choices() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get number of choices. Function argument choice_sets_ls specifies the where to look for the required object. The function returns Number of choices (an integer vector of length one).

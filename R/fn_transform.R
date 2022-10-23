@@ -5,6 +5,7 @@
 #' @param consent_1L_chr Consent (a character vector of length one), Default: ''
 #' @param person_uid_var_nm_1L_chr Person unique identifier variable name (a character vector of length one), Default: 'person_uid'
 #' @param seifa_lup Socio-Economic Indices for Areas (a lookup table), Default: NULL
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: 2
 #' @param write_to_1L_chr Write to (a character vector of length one), Default: character(0)
 #' @return Transformed replication dataset (a tibble)
 #' @rdname transform_repln_ds_for_analysis
@@ -15,7 +16,7 @@
 #' @importFrom ready4 get_from_lup_obj
 transform_repln_ds_for_analysis <- function (repln_ds_tb, areas_lup = NULL, consent_1L_chr = "", 
     person_uid_var_nm_1L_chr = "person_uid", seifa_lup = NULL, 
-    write_to_1L_chr = character(0)) 
+    set_idx_1L_int = 2L, write_to_1L_chr = character(0)) 
 {
     if (identical(write_to_1L_chr, character(0))) 
         write_to_1L_chr <- tempdir()
@@ -61,7 +62,7 @@ transform_repln_ds_for_analysis <- function (repln_ds_tb, areas_lup = NULL, cons
                 match_value_xx = .x, target_var_nm_1L_chr = "quartile_dbl")), 
             NA_character_)) %>% as.factor()) %>% dplyr::rowwise() %>% 
         dplyr::mutate(der_Missing_Tasks = sum(is.na(dplyr::c_across(dplyr::starts_with(records_ls$choice_vars_pfx_1L_chr)))) - 
-            length(dce_design_ls$block_indcs_ls$block_1_int)) %>% 
+            length(dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_idxs_ls[[1]])) %>% 
         dplyr::ungroup() %>% dplyr::mutate(der_All_Tasks = der_Missing_Tasks == 
         0)
     tfd_repln_ds_tb <- tfd_repln_ds_tb %>% dplyr::mutate(der_urban = dplyr::case_when(der_SOS %in% 

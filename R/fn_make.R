@@ -193,6 +193,19 @@ make_candidate_predrs_chr <- function (candidate_predrs_tb, concepts_chr = chara
                 1)]
     return(candidate_predrs_chr)
 }
+#' Make cards html list
+#' @description make_cards_html_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make cards html list. The function is called for its side effects and does not return a value.
+#' @param block_choice_tbs_ls Block choice tibbles (a list)
+#' @return NULL
+#' @rdname make_cards_html_ls
+#' @export 
+#' @importFrom purrr map pluck
+#' @keywords internal
+make_cards_html_ls <- function (block_choice_tbs_ls) 
+{
+    purrr::map(1:length(block_choice_tbs_ls), ~make_choice_card_html(block_choice_tbs_ls %>% 
+        purrr::pluck(.x)))
+}
 #' Make case choices dataset
 #' @description make_case_choices_ds() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make case choices dataset. The function returns Case choices (a tibble).
 #' @param case_choices_mat Case choices (a matrix)
@@ -228,7 +241,7 @@ make_case_choices_ds <- function (case_choices_mat, choice_sets_ls, new_opt_out_
 #' Make case choices matrix
 #' @description make_case_choices_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make case choices matrix. The function returns Case choices (a matrix).
 #' @param ds_tb Dataset (a tibble)
-#' @param block_indcs_ls Block indices (a list)
+#' @param block_idxs_ls Block indices (a list)
 #' @param choice_sets_ls Choice sets (a list)
 #' @param design_mat Design (a matrix)
 #' @param choice_vars_pfx_1L_chr Choice variables prefix (a character vector of length one), Default: 'DCE_B'
@@ -237,8 +250,7 @@ make_case_choices_ds <- function (case_choices_mat, choice_sets_ls, new_opt_out_
 #' @export 
 #' @importFrom purrr map reduce
 #' @importFrom dplyr slice
-make_case_choices_mat <- function (ds_tb, block_indcs_ls, choice_sets_ls, design_mat, 
-    choice_vars_pfx_1L_chr = "DCE_B") 
+make_case_choices_mat <- function (ds_tb, block_idxs_ls, choice_sets_ls, design_mat, choice_vars_pfx_1L_chr = "DCE_B") 
 {
     choice_responses_tb <- make_choice_responses_ds(ds_tb, choice_vars_pfx_1L_chr = choice_vars_pfx_1L_chr)
     nbr_of_choices_1L_int <- get_nbr_of_choices(choice_sets_ls)
@@ -252,7 +264,7 @@ make_case_choices_mat <- function (ds_tb, block_indcs_ls, choice_sets_ls, design
             1):((block_ref_1L_int) * nbr_of_choice_alts_1L_int)
     })
     reordered_mat <- reorder_design_mat(design_mat = design_mat, 
-        block_indcs_ls = block_indcs_ls, choice_sets_ls = choice_sets_ls)
+        block_idxs_ls = block_idxs_ls, choice_sets_ls = choice_sets_ls)
     case_choices_mat <- purrr::map(all_choices_indcs_ls, ~reordered_mat[.x, 
         ]) %>% purrr::reduce(~rbind(.x, .y))
     return(case_choices_mat)
@@ -273,6 +285,102 @@ make_choice_atts <- function (choice_sets_ls, opt_out_var_nm_1L_chr = "opt_out")
         choice_atts_chr <- c(opt_out_var_nm_1L_chr, choice_atts_chr)
     }
     return(choice_atts_chr)
+}
+#' Make choice card html
+#' @description make_choice_card_html() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice card html. The function is called for its side effects and does not return a value.
+#' @param choice_card_tb Choice card (a tibble)
+#' @return card_kbl (An object)
+#' @rdname make_choice_card_html
+#' @export 
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr filter rename pull select
+#' @importFrom knitr kable
+#' @importFrom kableExtra kable_styling column_spec
+#' @keywords internal
+make_choice_card_html <- function (choice_card_tb) 
+{
+    formatted_tb <- t(choice_card_tb) %>% tibble::as_tibble(rownames = "Attribute") %>% 
+        dplyr::filter(Attribute != "Choice") %>% dplyr::rename(`Social Anxiety App 1` = V1, 
+        `Social Anxiety App 2` = V2)
+    row_names <- formatted_tb %>% dplyr::pull(Attribute)
+    formatted_tb <- formatted_tb %>% dplyr::select(-Attribute)
+    formatted_tb <- formatted_tb %>% as.data.frame()
+    rownames(formatted_tb) <- row_names
+    card_kbl <- formatted_tb %>% knitr::kable(escape = F) %>% 
+        kableExtra::kable_styling(bootstrap_options = c("striped", 
+            "hover", "condensed", "responsive"), full_width = F, 
+            position = "left") %>% kableExtra::column_spec(1, 
+        bold = T, border_right = T) %>% kableExtra::column_spec(2:3, 
+        color = "black", border_right = T)
+    return(card_kbl)
+}
+#' Make choice cards
+#' @description make_choice_cards() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice cards. The function returns Choice cards (a list).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param block_idxs_ls Block indices (a list), Default: list()
+#' @param seed_1L_int Seed (an integer vector of length one), Default: 1987
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: 1
+#' @param transform_att_nms_1L_lgl Transform attribute names (a logical vector of length one), Default: T
+#' @return Choice cards (a list)
+#' @rdname make_choice_cards
+#' @export 
+#' @importFrom idefix Decode
+#' @importFrom purrr map
+#' @importFrom stringr str_replace_all
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr filter
+#' @keywords internal
+make_choice_cards <- function (dce_design_ls, block_idxs_ls = list(), seed_1L_int = 1987, 
+    set_idx_1L_int = 1L, transform_att_nms_1L_lgl = T) 
+{
+    set.seed(seed_1L_int)
+    survey_ls <- idefix::Decode(des = dce_design_ls$efnt_dsn_ls[[set_idx_1L_int]]$design, 
+        lvl.names = make_tfd_lvls_ls(dce_design_ls), coding = get_att_smrys(dce_design_ls, 
+            return_1L_chr = "type"), c.lvls = get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb, 
+            return_1L_chr = "cont") %>% unname() %>% purrr::map(~as.numeric(.x)), 
+        alt.cte = dce_design_ls$priors_ls[[set_idx_1L_int]]$altv_con_int, 
+        n.alts = length(dce_design_ls$choice_sets_ls$alternatives_chr), 
+        no.choice = dce_design_ls$choice_sets_ls$opt_out_idx_1L_int)
+    attributes_chr <- dce_design_ls$choice_sets_ls$att_lvls_tb$attribute_chr %>% 
+        unique()
+    if (transform_att_nms_1L_lgl) {
+        attributes_chr <- stringr::str_replace_all(attributes_chr, 
+            "_", " ")
+    }
+    choices_tb <- tibble::as_tibble(survey_ls$design, rownames = "Choice")
+    colnames(choices_tb) <- c("Choice", attributes_chr)
+    choices_tb <- choices_tb %>% dplyr::filter(!startsWith(Choice, 
+        "no"))
+    if (identical(block_idxs_ls, list())) {
+        indices_int <- 1:dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int
+        folds_int <- cut(indices_int, breaks = dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int, 
+            labels = FALSE) %>% sample()
+        block_idxs_ls <- 1:dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int %>% 
+            purrr::map(~indices_int[folds_int == .x])
+    }
+    choice_cards_tb_ls <- purrr::map(block_idxs_ls, ~make_choice_cards_tb_ls(.x, 
+        choices_tb))
+    choice_cards_html_ls <- purrr::map(choice_cards_tb_ls, ~make_cards_html_ls(.x))
+    choice_cards_ls <- list(survey_ls = survey_ls, block_idxs_ls = block_idxs_ls, 
+        choices_tb = choices_tb, choice_cards_tb_ls = choice_cards_tb_ls, 
+        choice_cards_html_ls = choice_cards_html_ls)
+    return(choice_cards_ls)
+}
+#' Make choice cards tibble list
+#' @description make_choice_cards_tb_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice cards tibble list. The function returns Block choice tibbles (a list).
+#' @param blocks_int Blocks (an integer vector)
+#' @param choices_tb Choices (a tibble)
+#' @return Block choice tibbles (a list)
+#' @rdname make_choice_cards_tb_ls
+#' @export 
+#' @importFrom purrr map
+#' @importFrom dplyr filter
+#' @keywords internal
+make_choice_cards_tb_ls <- function (blocks_int, choices_tb) 
+{
+    block_choice_tbs_ls <- purrr::map(blocks_int, ~dplyr::filter(choices_tb, 
+        startsWith(Choice, paste0("set", .x, "."))))
+    return(block_choice_tbs_ls)
 }
 #' Make choice modelling dataset
 #' @description make_choice_mdlng_ds() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice modelling dataset. The function returns Choice modelling (an output object of multiple potential types).
@@ -550,6 +658,7 @@ make_choice_smrys <- function (dce_design_ls, mdl_params_ls, records_ls, text_si
 #' @param by_altv_1L_lgl By alternative (a logical vector of length one), Default: T
 #' @param card_idx_1L_int Card index (an integer vector of length one), Default: 1
 #' @param new_choices_ls New choices (a list), Default: NULL
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: 2
 #' @return Choices (a list)
 #' @rdname make_choices_ls
 #' @export 
@@ -560,11 +669,11 @@ make_choice_smrys <- function (dce_design_ls, mdl_params_ls, records_ls, text_si
 #' @importFrom stringi stri_replace_first_fixed
 #' @keywords internal
 make_choices_ls <- function (dce_design_ls, block_idx_1L_int = 1L, by_altv_1L_lgl = T, 
-    card_idx_1L_int = 1L, new_choices_ls = NULL) 
+    card_idx_1L_int = 1L, new_choices_ls = NULL, set_idx_1L_int = 2L) 
 {
     alternatives_1L_int <- length(dce_design_ls$choice_sets_ls$alternatives_chr)
     active_1L_int <- alternatives_1L_int - dce_design_ls$choice_sets_ls$opt_out_1L_lgl
-    start_1L_int <- (dce_design_ls$block_indcs_ls[[block_idx_1L_int]][card_idx_1L_int] - 
+    start_1L_int <- (dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_idxs_ls[[block_idx_1L_int]][card_idx_1L_int] - 
         1) * alternatives_1L_int + 1
     choice_mat <- dce_design_ls$design_mat[start_1L_int:(start_1L_int + 
         alternatives_1L_int - 1), ]
@@ -738,6 +847,36 @@ make_cut_pnts_cmprsn <- function (ds_tb, grouping_var_nms_chr, expected_dbl = nu
         popl_var_nm_1L_chr = popl_var_nm_1L_chr, sample_var_nm_1L_chr = sample_var_nm_1L_chr, 
         expected_dbl = expected_dbl, is_pc_1L_lgl = is_pc_1L_lgl)
     return(cmprsn_tb)
+}
+#' Make efficient design matrix
+#' @description make_efnt_dsn_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make efficient design matrix. The function returns Efficient design (a matrix).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param parallel_1L_lgl Parallel (a logical vector of length one), Default: FALSE
+#' @param pilot_analysis_ls Pilot analysis (a list), Default: NULL
+#' @param priors_idx_1L_int Priors index (an integer vector of length one), Default: 1
+#' @param start_dsn_mat Start design (a matrix), Default: NULL
+#' @return Efficient design (a matrix)
+#' @rdname make_efnt_dsn_mat
+#' @export 
+#' @importFrom idefix Modfed
+#' @keywords internal
+make_efnt_dsn_mat <- function (dce_design_ls, parallel_1L_lgl = FALSE, pilot_analysis_ls = NULL, 
+    priors_idx_1L_int = 1L, start_dsn_mat = NULL) 
+{
+    efnt_dsn_mat <- idefix::Modfed(cand.set = dce_design_ls$cndt_design_mat, 
+        n.sets = dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int, 
+        n.alts = length(dce_design_ls$choice_sets_ls$alternatives_chr), 
+        no.choice = dce_design_ls$choice_sets_ls$opt_out_1L_lgl, 
+        alt.cte = dce_design_ls$priors_ls[[1]]$altv_con_int, 
+        parallel = parallel_1L_lgl, par.draws = {
+            if (is.null(pilot_analysis_ls)) {
+                dce_design_ls$priors_ls[[1]]$params_xx
+            }
+            else {
+                pilot_analysis_ls$sample
+            }
+        }, start.des = start_dsn_mat)
+    return(efnt_dsn_mat)
 }
 #' Make factor attributes dummy variable names
 #' @description make_fctr_atts_dummy_var_nms() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make factor attributes dummy variable names. The function returns New dummy attribute variable name (an output object of multiple potential types).
@@ -1103,6 +1242,36 @@ make_participants_ds <- function (ds_tb, candidate_predrs_chr, choice_sets_ls, p
     }
     return(participants_tb)
 }
+#' Make priors list
+#' @description make_priors_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make priors list. The function returns Priors (a list).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param priors_dbl Priors (a double vector)
+#' @param draws_1L_int Draws (an integer vector of length one), Default: 10
+#' @param seed_1L_int Seed (an integer vector of length one), Default: 1987
+#' @return Priors (a list)
+#' @rdname make_priors_ls
+#' @export 
+#' @importFrom MASS mvrnorm
+#' @keywords internal
+make_priors_ls <- function (dce_design_ls, priors_dbl, draws_1L_int = 10L, seed_1L_int = 1987) 
+{
+    set.seed(seed_1L_int)
+    variance_mat <- diag(length(priors_dbl))
+    params_mat <- MASS::mvrnorm(n = draws_1L_int, mu = priors_dbl, 
+        Sigma = variance_mat)
+    altv_con_int <- rep(0, length(dce_design_ls$choice_sets_ls$alternatives_chr))
+    if (dce_design_ls$choice_sets_ls$opt_out_1L_lgl) {
+        params_xx <- list(matrix(params_mat[, 1], ncol = 1), 
+            params_mat[, 2:12])
+        altv_con_int[dce_design_ls$choice_sets_ls$opt_out_idx_1L_int] <- 1
+    }
+    else {
+        params_xx <- params_mat
+    }
+    priors_ls <- list(altv_con_int = altv_con_int, params_xx = params_xx, 
+        priors_dbl = priors_dbl)
+    return(priors_ls)
+}
 #' Make random parameters character vector
 #' @description make_random_params_chr() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make random parameters character vector. The function returns Random parameters (a character vector).
 #' @param att_lvls_tb Attribute levels (a tibble)
@@ -1434,6 +1603,24 @@ make_sos_lup <- function (area_var_nm_1L_chr = "SOS_CODE_2016", fl_nm_1L_chr = "
             share_dbl = youth_popl_dbl/total_youth_popl_dbl) %>% 
         dplyr::select(der_urban_lgl, share_dbl)
     return(sos_lup)
+}
+#' Make transformed levels list
+#' @description make_tfd_lvls_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make transformed levels list. The function returns Levels (a list).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @return Levels (a list)
+#' @rdname make_tfd_lvls_ls
+#' @export 
+#' @importFrom purrr map_chr
+#' @importFrom stats setNames
+#' @keywords internal
+make_tfd_lvls_ls <- function (dce_design_ls) 
+{
+    lvls_ls <- get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)
+    lvls_ls[dce_design_ls$cost_att_idx_1L_int] <- list(lvls_ls[[dce_design_ls$cost_att_idx_1L_int]] %>% 
+        purrr::map_chr(~paste0(dce_design_ls$cost_pfx_1L_chr, 
+            .x, dce_design_ls$cost_sfx_1L_chr))) %>% stats::setNames(get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)[dce_design_ls$cost_att_idx_1L_int] %>% 
+        names())
+    return(lvls_ls)
 }
 #' Make willingness to pay matrix
 #' @description make_wtp_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make willingness to pay matrix. The function returns Willingness to pay (an output object of multiple potential types).

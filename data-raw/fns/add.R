@@ -388,6 +388,118 @@ add_cut_pnts_cmprsn <- function(prpn_cmprsns_ls = list(),
                                                               is_pc_1L_lgl = is_pc_1L_lgl)
   return(prpn_cmprsns_ls)
 }
+add_design_spec <- function(dce_design_ls = list(),
+                            add_cndt_design_mat = F,
+                            alternatives_chr = character(0),
+                            att_lvls_tb = tibble::tibble(),
+                            #block_idcs_1L_int = integer(0),
+                            block_idxs_ls = list(),
+                            cost_att_idx_1L_int = integer(0),
+                            cost_pfx_1L_chr = "",
+                            cost_sfx_1L_chr = "",
+                            design_mat = matrix(numeric(0)),
+                            draws_1L_int = 10L,
+                            nbr_of_blocks_1L_int = integer(0),
+                            nbr_of_sets_1L_int = integer(0),
+                            opt_out_idx_1L_int = integer(0),
+                            parallel_1L_lgl = FALSE,
+                            pilot_analysis_ls = NULL,
+                            priors_dbl = numeric(0),
+                            priors_idx_1L_int = integer(0),
+                            seed_1L_int = 1987,
+                            set_idx_1L_int = integer(0),
+                            start_dsn_mat = NULL,
+                            transform_att_nms_1L_lgl = T){
+  if(is.null(dce_design_ls$choice_cards_ls)){
+    dce_design_ls$choice_cards_ls <- list()
+  }
+  if(is.null(dce_design_ls$choice_sets_ls)){
+    dce_design_ls$choice_sets_ls <- list(alternatives_chr = alternatives_chr,
+                                         att_lvls_tb = att_lvls_tb,
+                                         nbr_of_blocks_1L_int = nbr_of_blocks_1L_int,
+                                         nbr_of_sets_1L_int = nbr_of_sets_1L_int,
+                                         opt_out_1L_lgl = logical(0),
+                                         opt_out_idx_1L_int = integer(0))
+  }
+  if(!identical(alternatives_chr,character(0))){
+    dce_design_ls$choice_sets_ls$alternatives_chr <- alternatives_chr
+  }
+  if(!identical(att_lvls_tb, tibble::tibble())){
+    dce_design_ls$choice_sets_ls$att_lvls_tb <- att_lvls_tb
+  }
+  if(!identical(design_mat, matrix(numeric(0)))){
+    dce_design_ls$design_mat <- design_mat
+  }
+  if(!identical(nbr_of_sets_1L_int, integer(0))){
+    dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int <- nbr_of_sets_1L_int
+  }
+  if(!identical(nbr_of_blocks_1L_int, integer(0))){
+    dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int <- nbr_of_blocks_1L_int
+  }
+  if(!identical(opt_out_idx_1L_int,integer(0))){
+    dce_design_ls$choice_sets_ls$opt_out_idx_1L_int <- opt_out_idx_1L_int ###
+  }
+  if(!identical(opt_out_idx_1L_int,integer(0))){
+    dce_design_ls$choice_sets_ls$opt_out_1L_lgl <- ifelse(is.na(dce_design_ls$choice_sets_ls$opt_out_idx_1L_int),
+                                                          F,
+                                                          T)
+  }
+  if(add_cndt_design_mat){
+    dce_design_ls$cndt_design_mat <- idefix::Profiles(lvls = get_att_smrys(dce_design_ls),
+                                                      coding = get_att_smrys(dce_design_ls,return_1L_chr = "type"),
+                                                      c.lvls = get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont") %>% unname() %>% purrr::map(~as.numeric(.x)))
+  }else{
+    if(is.null(dce_design_ls$cndt_design_mat)){
+      dce_design_ls$cndt_design_mat <- matrix(numeric(0))
+    }
+  }
+  if(is.null(dce_design_ls$cost_att_idx_1L_int) | !identical(cost_att_idx_1L_int, integer(0))){
+    dce_design_ls$cost_att_idx_1L_int <- cost_att_idx_1L_int
+  }
+  if(is.null(dce_design_ls$cost_pfx_1L_chr) | !identical(cost_pfx_1L_chr, "")){
+    dce_design_ls$cost_pfx_1L_chr <- cost_pfx_1L_chr
+  }
+  if(is.null(dce_design_ls$cost_sfx_1L_chr) | !identical(cost_sfx_1L_chr, "")){
+    dce_design_ls$cost_sfx_1L_chr <- cost_sfx_1L_chr
+  }
+  if(is.null(dce_design_ls$design_mat) | !identical(design_mat,matrix(numeric(0)))){
+    dce_design_ls$design_mat <- design_mat
+  }
+  if(is.null(dce_design_ls$efnt_dsn_ls)){
+    dce_design_ls$efnt_dsn_ls <- list()
+  }
+  if(is.null(dce_design_ls$priors_ls)){
+    dce_design_ls$priors_ls <- list()
+  }
+  if(!identical(priors_dbl, numeric(0))){
+    dce_design_ls$priors_ls <- append(dce_design_ls$priors_ls,
+                                      list(make_priors_ls(dce_design_ls,
+                                                          priors_dbl = priors_dbl,
+                                                          draws_1L_int = draws_1L_int,  seed_1L_int = seed_1L_int)) %>%
+                                        stats::setNames(paste0("Set_",
+                                                               length(dce_design_ls$priors_ls) + 1)))
+  }
+  if(!identical(priors_idx_1L_int, integer(0))){
+    dce_design_ls$efnt_dsn_ls <- append(dce_design_ls$efnt_dsn_ls,
+                                        list(make_efnt_dsn_mat(dce_design_ls,
+                                                               parallel_1L_lgl = parallel_1L_lgl,
+                                                               pilot_analysis_ls = pilot_analysis_ls,
+                                                               priors_idx_1L_int = priors_idx_1L_int,
+                                                               start_dsn_mat = start_dsn_mat)) %>%
+                                          stats::setNames(paste0("Set_", length(dce_design_ls$efnt_dsn_ls) + 1)))
+  }
+  if(!identical(set_idx_1L_int, integer(0))){
+    dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls,
+                                            list(make_choice_cards(dce_design_ls,
+                                                                   block_idxs_ls = block_idxs_ls,
+                                                                   seed_1L_int = seed_1L_int,
+                                                                   set_idx_1L_int = set_idx_1L_int,
+                                                                   transform_att_nms_1L_lgl = transform_att_nms_1L_lgl)) %>%
+                                              stats::setNames(paste0("Set_", length(dce_design_ls$choice_cards_ls) + 1)))
+
+  }
+  return(dce_design_ls)
+}
 add_duplicate_text_red_flag <- function(data_tb,
                                         unique_by_case_var_nms_chr){
   data_tb <- purrr::reduce(1:length(unique_by_case_var_nms_chr),

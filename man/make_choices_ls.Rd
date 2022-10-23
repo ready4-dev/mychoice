@@ -9,7 +9,8 @@ make_choices_ls(
   block_idx_1L_int = 1L,
   by_altv_1L_lgl = T,
   card_idx_1L_int = 1L,
-  new_choices_ls = NULL
+  new_choices_ls = NULL,
+  set_idx_1L_int = 2L
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ make_choices_ls(
 \item{card_idx_1L_int}{Card index (an integer vector of length one), Default: 1}
 
 \item{new_choices_ls}{New choices (a list), Default: NULL}
+
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 2}
 }
 \value{
 Choices (a list)

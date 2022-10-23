@@ -6,7 +6,7 @@
 \usage{
 make_case_choices_mat(
   ds_tb,
-  block_indcs_ls,
+  block_idxs_ls,
   choice_sets_ls,
   design_mat,
   choice_vars_pfx_1L_chr = "DCE_B"
@@ -15,7 +15,7 @@ make_case_choices_mat(
 \arguments{
 \item{ds_tb}{Dataset (a tibble)}
 
-\item{block_indcs_ls}{Block indices (a list)}
+\item{block_idxs_ls}{Block indices (a list)}
 
 \item{choice_sets_ls}{Choice sets (a list)}
 

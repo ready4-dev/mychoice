@@ -1,3 +1,17 @@
+get_att_smrys <- function(dce_design_ls,
+                          return_1L_chr = "levels"){
+  att_smry_tb <- dce_design_ls$choice_sets_ls$att_lvls_tb %>% dplyr::group_by(attribute_chr) %>% dplyr::summarise(levels = dplyr::n(), type = dplyr::first(continuous_lgl) %>% ifelse("C","D"))
+  return_xx  <- get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb) %>%
+    purrr::map(~ready4::get_from_lup_obj(att_smry_tb,
+                                         match_var_nm_1L_chr = "attribute_chr",
+                                         match_value_xx = .x,
+                                         target_var_nm_1L_chr = return_1L_chr))
+  if(return_1L_chr == "levels")
+    return_xx <- return_xx %>% purrr::flatten_int()
+  if(return_1L_chr == "type")
+    return_xx <- return_xx %>% purrr::flatten_chr()
+  return(return_xx)
+}
 get_atts <- function(att_lvls_tb,
                      return_1L_chr = "all"){
   atts_chr <- att_lvls_tb$attribute_chr %>% unique()
@@ -20,6 +34,13 @@ get_fctr_atts_dummy_var_nms <- function(att_lvls_tb,
       purrr::flatten_chr()
   }
   return(fctr_atts_dummy_var_nms_xx)
+}
+get_lvls <- function(att_lvls_tb, return_1L_chr = "all"){
+  atts_chr <- get_atts(att_lvls_tb, return_1L_chr = return_1L_chr)
+  lvls_ls <- atts_chr %>%
+    purrr::map(~att_lvls_tb %>% dplyr::filter(attribute_chr == .x) %>% dplyr::pull(level_chr)) %>%
+    stats::setNames(atts_chr)
+  return(lvls_ls)
 }
 get_nbr_of_choices <- function(choice_sets_ls){
   nbr_of_choices_1L_int <- choice_sets_ls$nbr_of_sets_1L_int/choice_sets_ls$nbr_of_blocks_1L_int
