@@ -59,7 +59,8 @@ z <- ready4::author(z)
 ready4::write_citation_cff(packageDescription("mychoice"),
                            citation_chr = readLines("inst/CITATION"))
 readLines(".github/workflows/R-CMD-check.yaml") %>%
-  stringr::str_replace_all("r-lib/actions/setup-r@master","r-lib/actions/setup-r@main") %>%
+  stringr::str_replace_all("r-lib/actions/setup-r@master","r-lib/actions/setup-r@v2") %>%
+  stringr::str_replace_all("r-lib/actions/setup-pandoc@master","r-lib/actions/setup-pandoc@v2") %>%
   writeLines(con = ".github/workflows/R-CMD-check.yaml")
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
