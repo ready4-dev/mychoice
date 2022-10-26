@@ -240,7 +240,7 @@ make_choice_cards <- function(dce_design_ls,
                               c.lvls = get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont") %>%
                                 unname() %>%
                                 purrr::map(~as.numeric(.x)),
-                              alt.cte = dce_design_ls$priors_ls[[set_idx_1L_int]]$altv_con_int,
+                              alt.cte = dce_design_ls$priors_ls[[min(set_idx_1L_int,length(dce_design_ls$priors_ls))]]$altv_con_int,
                               n.alts = length(dce_design_ls$choice_sets_ls$alternatives_chr),
                               no.choice = dce_design_ls$choice_sets_ls$opt_out_idx_1L_int)
   attributes_chr <- dce_design_ls$choice_sets_ls$att_lvls_tb$attribute_chr %>% unique()
@@ -270,13 +270,32 @@ make_choice_cards <- function(dce_design_ls,
                           choice_cards_tb_ls = choice_cards_tb_ls,
                           choice_cards_html_ls = choice_cards_html_ls)
   return(choice_cards_ls)
-
 }
 make_choice_cards_tb_ls <- function(blocks_int,
                                     choices_tb){
   block_choice_tbs_ls <- purrr::map(blocks_int,
                                     ~ dplyr::filter(choices_tb, startsWith(Choice, paste0("set",.x,"."))))
   return(block_choice_tbs_ls)
+}
+make_choice_int <- function(ds_tb,
+                            choice_sets_ls,
+                            choice_vars_pfx_1L_chr ="DCE_B"){
+  choice_int <- purrr::map(1:nrow(ds_tb),
+                           ~ make_choice_responses_ds(ds_tb,
+                                                      choice_vars_pfx_1L_chr = choice_vars_pfx_1L_chr) %>%
+                             dplyr::slice(.x) %>%
+                             as.numeric() %>%
+                             purrr::map(
+                               ~ if(is.na(.x)){
+                                 NULL
+                               }else{
+                                 choice_idcs_int <- rep(0,length(choice_sets_ls$alternatives_chr))
+                                 choice_idcs_int[.x] <- 1
+                                 choice_idcs_int
+                               }) %>%
+                             unlist()) %>%
+    unlist()
+  return(choice_int)
 }
 make_choice_mdlng_ds <- function(case_choices_mat,
                                  candidate_predrs_tb,
@@ -293,21 +312,9 @@ make_choice_mdlng_ds <- function(case_choices_mat,
                                  types_chr = character(0)){
   case_choices_tb <- make_case_choices_ds(case_choices_mat = case_choices_mat,
                                           choice_sets_ls = choice_sets_ls)
-  choice_int <- purrr::map(1:nrow(ds_tb),
-                           ~ make_choice_responses_ds(ds_tb,
-                                                      choice_vars_pfx_1L_chr = choice_vars_pfx_1L_chr) %>%
-                             dplyr::slice(.x) %>%
-                             as.numeric() %>%
-                             purrr::map(
-                               ~ if(is.na(.x)){
-                                 NULL
-                               }else{
-                                 choice_idcs_int <- rep(0,length(choice_sets_ls$alternatives_chr))
-                                 choice_idcs_int[.x] <- 1
-                                 choice_idcs_int
-                               }) %>%
-                             unlist()) %>%
-    unlist()
+  choice_int <- make_choice_int(ds_tb,
+                                choice_sets_ls = choice_sets_ls,
+                                choice_vars_pfx_1L_chr = choice_vars_pfx_1L_chr)
   participants_tb <- make_participants_ds(ds_tb,
                                           candidate_predrs_chr = make_candidate_predrs_chr(candidate_predrs_tb,
                                                                                            concepts_chr = concepts_chr,
@@ -655,17 +662,18 @@ make_cut_pnts_cmprsn <- function(ds_tb,
 }
 make_efnt_dsn_mat <- function(dce_design_ls,
                               parallel_1L_lgl = FALSE,
-                              pilot_analysis_ls = NULL,
+                              pilot_analysis_ls = list(),
                               priors_idx_1L_int = 1L,
-                              start_dsn_mat = NULL){
+                              set_idx_1L_int = 1L,
+                              start_dsn_mat_ls = NULL){
   efnt_dsn_mat <- idefix::Modfed(cand.set = dce_design_ls$cndt_design_mat,
-                                 n.sets =dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int,
+                                 n.sets = dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int,
                                  n.alts = length(dce_design_ls$choice_sets_ls$alternatives_chr),
                                  no.choice = dce_design_ls$choice_sets_ls$opt_out_1L_lgl,
-                                 alt.cte = dce_design_ls$priors_ls[[1]]$altv_con_int,
+                                 alt.cte = dce_design_ls$priors_ls[[priors_idx_1L_int]]$altv_con_int,
                                  parallel = parallel_1L_lgl,
-                                 par.draws = {if(is.null(pilot_analysis_ls)){dce_design_ls$priors_ls[[1]]$params_xx}else{pilot_analysis_ls$sample}},
-                                 start.des = start_dsn_mat)
+                                 par.draws = {if(identical(pilot_analysis_ls,list())){dce_design_ls$priors_ls[[priors_idx_1L_int]]$params_xx}else{pilot_analysis_ls[[set_idx_1L_int]]$sample}},
+                                 start.des = start_dsn_mat_ls)
   return(efnt_dsn_mat)
 }
 make_fctr_atts_indcs <- function(att_lvls_tb){
@@ -944,6 +952,50 @@ make_participants_ds <- function(ds_tb,
     participants_tb <- participants_tb %>% dplyr::distinct()
   }
   return(participants_tb)
+}
+make_pilot_analysis_ls <- function(pilot_ds_tb,
+                                   dce_design_ls,
+                                   constraints_ls = list(),
+                                   choice_var_pfx_1L_chr = "DCE_B",
+                                   draws_1L_int = 100L,
+                                   seed_1L_int = 1987,
+                                   set_idx_1L_int = 1L){
+  set.seed(seed_1L_int)
+  pilot_ds_tb <- pilot_ds_tb %>%
+    make_choice_responses_ds(choice_vars_pfx_1L_chr = choice_var_pfx_1L_chr)
+  case_choices_mat <- make_case_choices_mat(pilot_ds_tb,
+                                            block_idxs_ls = dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_idxs_ls,
+                                            choice_sets_ls = dce_design_ls$choice_sets_ls,
+                                            design_mat = dce_design_ls$efnt_dsn_ls[[set_idx_1L_int]]$design,
+                                            choice_vars_pfx_1L_chr = choice_var_pfx_1L_chr)
+  choice_int <- make_choice_int(pilot_ds_tb,
+                                choice_sets_ls = dce_design_ls$choice_sets_ls,
+                                choice_vars_pfx_1L_chr = choice_var_pfx_1L_chr)
+  var_nms_chr <- make_case_choices_ds(case_choices_mat,
+                                      choice_sets_ls = dce_design_ls$choice_sets_ls) %>%
+    names()
+  high_bounds_dbl <- rep(Inf, length(var_nms_chr))
+  low_bounds_dbl <-- high_bounds_dbl
+  low_bounds_dbl <- var_nms_chr %>%
+    purrr::map2_dbl(low_bounds_dbl,
+                    ~ifelse(.x %in% names(constraints_ls),
+                            constraints_ls[[.x]][1],
+                            .y))
+  high_bounds_dbl <- var_nms_chr %>%
+    purrr::map2_dbl(high_bounds_dbl,
+                    ~ifelse(.x %in% names(constraints_ls),
+                            constraints_ls[[.x]][2],
+                            .y))
+  pilot_analysis_ls <- idefix::ImpsampMNL(n.draws = draws_1L_int,
+                                          prior.mean = dce_design_ls$priors_ls[[set_idx_1L_int]]$priors_dbl,
+                                          prior.covar = diag(length(dce_design_ls$priors_ls[[set_idx_1L_int]]$priors_dbl)),
+                                          des = case_choices_mat,
+                                          n.alts = length(dce_design_ls$choice_sets_ls$alternatives_chr),
+                                          y = choice_int,
+                                          lower = low_bounds_dbl,
+                                          upper = high_bounds_dbl,
+                                          alt.cte = dce_design_ls$priors_ls[[set_idx_1L_int]]$altv_con_int)
+  return(pilot_analysis_ls)
 }
 make_priors_ls <- function(dce_design_ls,
                            priors_dbl,

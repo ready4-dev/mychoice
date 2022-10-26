@@ -5,7 +5,7 @@
 #' @param button_txt_1L_chr Button text (a character vector of length one), Default: character(0)
 #' @param end_txt_1L_chr End text (a character vector of length one), Default: character(0)
 #' @param intro_text_1L_chr Intro text (a character vector of length one), Default: character(0)
-#' @param set_idx_1L_int Set index (an integer vector of length one), Default: 1
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
 #' @param transform_att_nms_1L_lgl Transform attribute names (a logical vector of length one), Default: T
 #' @return NULL
 #' @rdname launch_survey_preview
@@ -16,8 +16,11 @@
 #' @keywords internal
 launch_survey_preview <- function (dce_design_ls, block_1L_int = integer(0), button_txt_1L_chr = character(0), 
     end_txt_1L_chr = character(0), intro_text_1L_chr = character(0), 
-    set_idx_1L_int = 1L, transform_att_nms_1L_lgl = T) 
+    set_idx_1L_int = integer(0), transform_att_nms_1L_lgl = T) 
 {
+    if (identical(set_idx_1L_int, integer(0))) {
+        set_idx_1L_int <- length(dce_design_ls$choice_cards_ls)
+    }
     atts_chr <- get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, 
         return_1L_chr = "all")
     if (transform_att_nms_1L_lgl) 
@@ -50,5 +53,6 @@ launch_survey_preview <- function (dce_design_ls, block_1L_int = integer(0), but
         coding = get_att_smrys(dce_design_ls, return_1L_chr = "type"), 
         buttons.text = button_txt_1L_chr, intro.text = intro_text_1L_chr, 
         end.text = end_txt_1L_chr, no.choice = dce_design_ls$choice_sets_ls$opt_out_idx_1L_int, 
-        alt.cte = dce_design_ls$priors_ls[[set_idx_1L_int]]$altv_con_int)
+        alt.cte = dce_design_ls$priors_ls[[min(set_idx_1L_int, 
+            length(dce_design_ls$priors_ls))]]$altv_con_int)
 }

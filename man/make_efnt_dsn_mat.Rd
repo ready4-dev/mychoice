@@ -7,9 +7,10 @@
 make_efnt_dsn_mat(
   dce_design_ls,
   parallel_1L_lgl = FALSE,
-  pilot_analysis_ls = NULL,
+  pilot_analysis_ls = list(),
   priors_idx_1L_int = 1L,
-  start_dsn_mat = NULL
+  set_idx_1L_int = 1L,
+  start_dsn_mat_ls = NULL
 )
 }
 \arguments{
@@ -17,11 +18,13 @@ make_efnt_dsn_mat(
 
 \item{parallel_1L_lgl}{Parallel (a logical vector of length one), Default: FALSE}
 
-\item{pilot_analysis_ls}{Pilot analysis (a list), Default: NULL}
+\item{pilot_analysis_ls}{Pilot analysis (a list), Default: list()}
 
 \item{priors_idx_1L_int}{Priors index (an integer vector of length one), Default: 1}
 
-\item{start_dsn_mat}{Start design (a matrix), Default: NULL}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 1}
+
+\item{start_dsn_mat_ls}{Start design (a list of matrices), Default: NULL}
 }
 \value{
 Efficient design (a matrix)

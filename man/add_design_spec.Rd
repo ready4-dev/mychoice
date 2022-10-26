@@ -6,10 +6,13 @@
 \usage{
 add_design_spec(
   dce_design_ls = list(),
+  add_choice_cards_1L_lgl = F,
   add_cndt_design_mat = F,
   alternatives_chr = character(0),
   att_lvls_tb = tibble::tibble(),
   block_idxs_ls = list(),
+  choice_var_pfx_1L_chr = "DCE_B",
+  constraints_ls = list(),
   cost_att_idx_1L_int = integer(0),
   cost_pfx_1L_chr = "",
   cost_sfx_1L_chr = "",
@@ -19,17 +22,19 @@ add_design_spec(
   nbr_of_sets_1L_int = integer(0),
   opt_out_idx_1L_int = integer(0),
   parallel_1L_lgl = FALSE,
-  pilot_analysis_ls = NULL,
+  pilot_ds_tb = NULL,
   priors_dbl = numeric(0),
   priors_idx_1L_int = integer(0),
   seed_1L_int = 1987,
+  session_ls = list(),
   set_idx_1L_int = integer(0),
-  start_dsn_mat = NULL,
   transform_att_nms_1L_lgl = T
 )
 }
 \arguments{
 \item{dce_design_ls}{Discrete choice experiment design (a list), Default: list()}
+
+\item{add_choice_cards_1L_lgl}{Add choice cards (a logical vector of length one), Default: F}
 
 \item{add_cndt_design_mat}{Add candidate design (a matrix), Default: F}
 
@@ -38,6 +43,10 @@ add_design_spec(
 \item{att_lvls_tb}{Attribute levels (a tibble), Default: tibble::tibble()}
 
 \item{block_idxs_ls}{Block indices (a list), Default: list()}
+
+\item{choice_var_pfx_1L_chr}{Choice variable prefix (a character vector of length one), Default: 'DCE_B'}
+
+\item{constraints_ls}{Constraints (a list), Default: list()}
 
 \item{cost_att_idx_1L_int}{Cost attribute index (an integer vector of length one), Default: integer(0)}
 
@@ -57,7 +66,7 @@ add_design_spec(
 
 \item{parallel_1L_lgl}{Parallel (a logical vector of length one), Default: FALSE}
 
-\item{pilot_analysis_ls}{Pilot analysis (a list), Default: NULL}
+\item{pilot_ds_tb}{Pilot dataset (a tibble), Default: NULL}
 
 \item{priors_dbl}{Priors (a double vector), Default: numeric(0)}
 
@@ -65,9 +74,9 @@ add_design_spec(
 
 \item{seed_1L_int}{Seed (an integer vector of length one), Default: 1987}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
+\item{session_ls}{Session (a list), Default: list()}
 
-\item{start_dsn_mat}{Start design (a matrix), Default: NULL}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{transform_att_nms_1L_lgl}{Transform attribute names (a logical vector of length one), Default: T}
 }

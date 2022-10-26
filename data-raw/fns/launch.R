@@ -3,8 +3,11 @@ launch_survey_preview <- function(dce_design_ls,
                                   button_txt_1L_chr = character(0),
                                   end_txt_1L_chr = character(0),
                                   intro_text_1L_chr = character(0),
-                                  set_idx_1L_int = 1L,
+                                  set_idx_1L_int = integer(0),
                                   transform_att_nms_1L_lgl = T){
+  if(identical(set_idx_1L_int, integer(0))){
+    set_idx_1L_int <- length(dce_design_ls$choice_cards_ls)
+  }
   atts_chr <- get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "all")
   if(transform_att_nms_1L_lgl)
     atts_chr <- atts_chr %>% stringr::str_replace_all("_"," ")
@@ -36,6 +39,6 @@ launch_survey_preview <- function(dce_design_ls,
                     intro.text = intro_text_1L_chr,
                     end.text = end_txt_1L_chr,
                     no.choice = dce_design_ls$choice_sets_ls$opt_out_idx_1L_int,
-                    alt.cte = dce_design_ls$priors_ls[[set_idx_1L_int]]$altv_con_int)
+                    alt.cte = dce_design_ls$priors_ls[[min(set_idx_1L_int,length(dce_design_ls$priors_ls))]]$altv_con_int)
 
 }

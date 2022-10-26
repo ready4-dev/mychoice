@@ -389,11 +389,14 @@ add_cut_pnts_cmprsn <- function(prpn_cmprsns_ls = list(),
   return(prpn_cmprsns_ls)
 }
 add_design_spec <- function(dce_design_ls = list(),
+                            add_choice_cards_1L_lgl = F,
                             add_cndt_design_mat = F,
                             alternatives_chr = character(0),
                             att_lvls_tb = tibble::tibble(),
                             #block_idcs_1L_int = integer(0),
                             block_idxs_ls = list(),
+                            choice_var_pfx_1L_chr = "DCE_B",
+                            constraints_ls = list(),
                             cost_att_idx_1L_int = integer(0),
                             cost_pfx_1L_chr = "",
                             cost_sfx_1L_chr = "",
@@ -403,12 +406,14 @@ add_design_spec <- function(dce_design_ls = list(),
                             nbr_of_sets_1L_int = integer(0),
                             opt_out_idx_1L_int = integer(0),
                             parallel_1L_lgl = FALSE,
-                            pilot_analysis_ls = NULL,
+                            #pilot_analysis_ls = NULL,
+                            pilot_ds_tb = NULL,
                             priors_dbl = numeric(0),
                             priors_idx_1L_int = integer(0),
                             seed_1L_int = 1987,
+                            session_ls = list(),
                             set_idx_1L_int = integer(0),
-                            start_dsn_mat = NULL,
+                            #start_dsn_mat = NULL,
                             transform_att_nms_1L_lgl = T){
   if(is.null(dce_design_ls$choice_cards_ls)){
     dce_design_ls$choice_cards_ls <- list()
@@ -468,8 +473,25 @@ add_design_spec <- function(dce_design_ls = list(),
   if(is.null(dce_design_ls$efnt_dsn_ls)){
     dce_design_ls$efnt_dsn_ls <- list()
   }
+  if(is.null(dce_design_ls$pilot_analysis_ls)){
+    dce_design_ls$pilot_analysis_ls <- list()
+  }
   if(is.null(dce_design_ls$priors_ls)){
     dce_design_ls$priors_ls <- list()
+  }
+  if(is.null(dce_design_ls$session_ls)){
+    dce_design_ls$session_ls$Set_1 <- {if(identical(session_ls, list())){
+      sessionInfo()
+    }else{
+      session_ls
+    }}
+  }else{
+    if(!identical(session_ls, list())){
+      append(dce_design_ls$session_ls,
+             list(session_ls) %>%
+               stats::setNames(paste0("Set_",
+                                      length(dce_design_ls$session_ls) + 1)))
+    }
   }
   if(!identical(priors_dbl, numeric(0))){
     dce_design_ls$priors_ls <- append(dce_design_ls$priors_ls,
@@ -480,23 +502,48 @@ add_design_spec <- function(dce_design_ls = list(),
                                                                length(dce_design_ls$priors_ls) + 1)))
   }
   if(!identical(priors_idx_1L_int, integer(0))){
+    if(identical(dce_design_ls$pilot_analysis_ls,list())){
+      start_dsn_mat_ls <- NULL
+    }else{
+      start_dsn_mat_ls <- list(dce_design_ls$efnt_dsn_ls[[set_idx_1L_int]]$design)
+    }
     dce_design_ls$efnt_dsn_ls <- append(dce_design_ls$efnt_dsn_ls,
                                         list(make_efnt_dsn_mat(dce_design_ls,
                                                                parallel_1L_lgl = parallel_1L_lgl,
-                                                               pilot_analysis_ls = pilot_analysis_ls,
+                                                               pilot_analysis_ls = {if(identical(dce_design_ls$pilot_analysis_ls,list())){
+                                                                 NULL
+                                                               }else{dce_design_ls$pilot_analysis_ls}},
                                                                priors_idx_1L_int = priors_idx_1L_int,
-                                                               start_dsn_mat = start_dsn_mat)) %>%
+                                                               set_idx_1L_int = set_idx_1L_int,
+                                                               start_dsn_mat_ls = start_dsn_mat_ls)) %>%
                                           stats::setNames(paste0("Set_", length(dce_design_ls$efnt_dsn_ls) + 1)))
   }
-  if(!identical(set_idx_1L_int, integer(0))){
+  if(add_choice_cards_1L_lgl){
     dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls,
                                             list(make_choice_cards(dce_design_ls,
                                                                    block_idxs_ls = block_idxs_ls,
                                                                    seed_1L_int = seed_1L_int,
-                                                                   set_idx_1L_int = set_idx_1L_int,
+                                                                   set_idx_1L_int = {
+                                                                     if(!identical(set_idx_1L_int, integer(0))){
+                                                                       set_idx_1L_int
+                                                                     }else{
+                                                                       length(dce_design_ls$efnt_dsn_ls)
+                                                                     }
+                                                                   },
                                                                    transform_att_nms_1L_lgl = transform_att_nms_1L_lgl)) %>%
                                               stats::setNames(paste0("Set_", length(dce_design_ls$choice_cards_ls) + 1)))
 
+  }
+  if(!is.null(pilot_ds_tb)){
+    dce_design_ls$pilot_analysis_ls <- append(dce_design_ls$pilot_analysis_ls,
+                                              list(make_pilot_analysis_ls(pilot_ds_tb,
+                                                                          dce_design_ls = dce_design_ls,
+                                                                          constraints_ls = constraints_ls,
+                                                                          choice_var_pfx_1L_chr = choice_var_pfx_1L_chr,
+                                                                          draws_1L_int = draws_1L_int,
+                                                                          seed_1L_int = seed_1L_int,
+                                                                          set_idx_1L_int = set_idx_1L_int)) %>%
+                                                stats::setNames(paste0("Set_", length(dce_design_ls$pilot_analysis_ls) + 1)))
   }
   return(dce_design_ls)
 }

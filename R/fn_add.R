@@ -452,10 +452,13 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' Add design specification
 #' @description add_design_spec() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add design specification. Function argument dce_design_ls specifies the object to be updated. The function returns Discrete choice experiment design (a list).
 #' @param dce_design_ls Discrete choice experiment design (a list), Default: list()
+#' @param add_choice_cards_1L_lgl Add choice cards (a logical vector of length one), Default: F
 #' @param add_cndt_design_mat Add candidate design (a matrix), Default: F
 #' @param alternatives_chr Alternatives (a character vector), Default: character(0)
 #' @param att_lvls_tb Attribute levels (a tibble), Default: tibble::tibble()
 #' @param block_idxs_ls Block indices (a list), Default: list()
+#' @param choice_var_pfx_1L_chr Choice variable prefix (a character vector of length one), Default: 'DCE_B'
+#' @param constraints_ls Constraints (a list), Default: list()
 #' @param cost_att_idx_1L_int Cost attribute index (an integer vector of length one), Default: integer(0)
 #' @param cost_pfx_1L_chr Cost prefix (a character vector of length one), Default: ''
 #' @param cost_sfx_1L_chr Cost suffix (a character vector of length one), Default: ''
@@ -465,12 +468,12 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' @param nbr_of_sets_1L_int Number of sets (an integer vector of length one), Default: integer(0)
 #' @param opt_out_idx_1L_int Opt out index (an integer vector of length one), Default: integer(0)
 #' @param parallel_1L_lgl Parallel (a logical vector of length one), Default: FALSE
-#' @param pilot_analysis_ls Pilot analysis (a list), Default: NULL
+#' @param pilot_ds_tb Pilot dataset (a tibble), Default: NULL
 #' @param priors_dbl Priors (a double vector), Default: numeric(0)
 #' @param priors_idx_1L_int Priors index (an integer vector of length one), Default: integer(0)
 #' @param seed_1L_int Seed (an integer vector of length one), Default: 1987
+#' @param session_ls Session (a list), Default: list()
 #' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
-#' @param start_dsn_mat Start design (a matrix), Default: NULL
 #' @param transform_att_nms_1L_lgl Transform attribute names (a logical vector of length one), Default: T
 #' @return Discrete choice experiment design (a list)
 #' @rdname add_design_spec
@@ -480,13 +483,15 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' @importFrom purrr map
 #' @importFrom stats setNames
 #' @keywords internal
-add_design_spec <- function (dce_design_ls = list(), add_cndt_design_mat = F, alternatives_chr = character(0), 
-    att_lvls_tb = tibble::tibble(), block_idxs_ls = list(), cost_att_idx_1L_int = integer(0), 
+add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F, 
+    add_cndt_design_mat = F, alternatives_chr = character(0), 
+    att_lvls_tb = tibble::tibble(), block_idxs_ls = list(), choice_var_pfx_1L_chr = "DCE_B", 
+    constraints_ls = list(), cost_att_idx_1L_int = integer(0), 
     cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", design_mat = matrix(numeric(0)), 
     draws_1L_int = 10L, nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
     opt_out_idx_1L_int = integer(0), parallel_1L_lgl = FALSE, 
-    pilot_analysis_ls = NULL, priors_dbl = numeric(0), priors_idx_1L_int = integer(0), 
-    seed_1L_int = 1987, set_idx_1L_int = integer(0), start_dsn_mat = NULL, 
+    pilot_ds_tb = NULL, priors_dbl = numeric(0), priors_idx_1L_int = integer(0), 
+    seed_1L_int = 1987, session_ls = list(), set_idx_1L_int = integer(0), 
     transform_att_nms_1L_lgl = T) 
 {
     if (is.null(dce_design_ls$choice_cards_ls)) {
@@ -550,8 +555,28 @@ add_design_spec <- function (dce_design_ls = list(), add_cndt_design_mat = F, al
     if (is.null(dce_design_ls$efnt_dsn_ls)) {
         dce_design_ls$efnt_dsn_ls <- list()
     }
+    if (is.null(dce_design_ls$pilot_analysis_ls)) {
+        dce_design_ls$pilot_analysis_ls <- list()
+    }
     if (is.null(dce_design_ls$priors_ls)) {
         dce_design_ls$priors_ls <- list()
+    }
+    if (is.null(dce_design_ls$session_ls)) {
+        dce_design_ls$session_ls$Set_1 <- {
+            if (identical(session_ls, list())) {
+                sessionInfo()
+            }
+            else {
+                session_ls
+            }
+        }
+    }
+    else {
+        if (!identical(session_ls, list())) {
+            append(dce_design_ls$session_ls, list(session_ls) %>% 
+                stats::setNames(paste0("Set_", length(dce_design_ls$session_ls) + 
+                  1)))
+        }
     }
     if (!identical(priors_dbl, numeric(0))) {
         dce_design_ls$priors_ls <- append(dce_design_ls$priors_ls, 
@@ -561,19 +586,45 @@ add_design_spec <- function (dce_design_ls = list(), add_cndt_design_mat = F, al
                   1)))
     }
     if (!identical(priors_idx_1L_int, integer(0))) {
+        if (identical(dce_design_ls$pilot_analysis_ls, list())) {
+            start_dsn_mat_ls <- NULL
+        }
+        else {
+            start_dsn_mat_ls <- list(dce_design_ls$efnt_dsn_ls[[set_idx_1L_int]]$design)
+        }
         dce_design_ls$efnt_dsn_ls <- append(dce_design_ls$efnt_dsn_ls, 
             list(make_efnt_dsn_mat(dce_design_ls, parallel_1L_lgl = parallel_1L_lgl, 
-                pilot_analysis_ls = pilot_analysis_ls, priors_idx_1L_int = priors_idx_1L_int, 
-                start_dsn_mat = start_dsn_mat)) %>% stats::setNames(paste0("Set_", 
+                pilot_analysis_ls = {
+                  if (identical(dce_design_ls$pilot_analysis_ls, 
+                    list())) {
+                    NULL
+                  } else {
+                    dce_design_ls$pilot_analysis_ls
+                  }
+                }, priors_idx_1L_int = priors_idx_1L_int, set_idx_1L_int = set_idx_1L_int, 
+                start_dsn_mat_ls = start_dsn_mat_ls)) %>% stats::setNames(paste0("Set_", 
                 length(dce_design_ls$efnt_dsn_ls) + 1)))
     }
-    if (!identical(set_idx_1L_int, integer(0))) {
+    if (add_choice_cards_1L_lgl) {
         dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls, 
             list(make_choice_cards(dce_design_ls, block_idxs_ls = block_idxs_ls, 
-                seed_1L_int = seed_1L_int, set_idx_1L_int = set_idx_1L_int, 
-                transform_att_nms_1L_lgl = transform_att_nms_1L_lgl)) %>% 
+                seed_1L_int = seed_1L_int, set_idx_1L_int = {
+                  if (!identical(set_idx_1L_int, integer(0))) {
+                    set_idx_1L_int
+                  } else {
+                    length(dce_design_ls$efnt_dsn_ls)
+                  }
+                }, transform_att_nms_1L_lgl = transform_att_nms_1L_lgl)) %>% 
                 stats::setNames(paste0("Set_", length(dce_design_ls$choice_cards_ls) + 
                   1)))
+    }
+    if (!is.null(pilot_ds_tb)) {
+        dce_design_ls$pilot_analysis_ls <- append(dce_design_ls$pilot_analysis_ls, 
+            list(make_pilot_analysis_ls(pilot_ds_tb, dce_design_ls = dce_design_ls, 
+                constraints_ls = constraints_ls, choice_var_pfx_1L_chr = choice_var_pfx_1L_chr, 
+                draws_1L_int = draws_1L_int, seed_1L_int = seed_1L_int, 
+                set_idx_1L_int = set_idx_1L_int)) %>% stats::setNames(paste0("Set_", 
+                length(dce_design_ls$pilot_analysis_ls) + 1)))
     }
     return(dce_design_ls)
 }

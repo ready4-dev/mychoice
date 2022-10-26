@@ -10,7 +10,7 @@ launch_survey_preview(
   button_txt_1L_chr = character(0),
   end_txt_1L_chr = character(0),
   intro_text_1L_chr = character(0),
-  set_idx_1L_int = 1L,
+  set_idx_1L_int = integer(0),
   transform_att_nms_1L_lgl = T
 )
 }
@@ -25,7 +25,7 @@ launch_survey_preview(
 
 \item{intro_text_1L_chr}{Intro text (a character vector of length one), Default: character(0)}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 1}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{transform_att_nms_1L_lgl}{Transform attribute names (a logical vector of length one), Default: T}
 }
