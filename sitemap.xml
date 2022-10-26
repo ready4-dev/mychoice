@@ -142,6 +142,9 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_cards_tb_ls.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_int.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_mdlng_ds.html</loc>
   </url>
   <url>
@@ -203,6 +206,9 @@
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_participants_ds.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_pilot_analysis_ls.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_priors_ls.html</loc>

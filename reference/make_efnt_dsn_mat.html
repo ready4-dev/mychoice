@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mychoice</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9012</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,9 +54,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_efnt_dsn_mat</span><span class="op">(</span></span>
 <span>  <span class="va">dce_design_ls</span>,</span>
 <span>  parallel_1L_lgl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  pilot_analysis_ls <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pilot_analysis_ls <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  priors_idx_1L_int <span class="op">=</span> <span class="fl">1L</span>,</span>
-<span>  start_dsn_mat <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  set_idx_1L_int <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  start_dsn_mat_ls <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,15 +72,19 @@
 
 
 <dt>pilot_analysis_ls</dt>
-<dd><p>Pilot analysis (a list), Default: NULL</p></dd>
+<dd><p>Pilot analysis (a list), Default: list()</p></dd>
 
 
 <dt>priors_idx_1L_int</dt>
 <dd><p>Priors index (an integer vector of length one), Default: 1</p></dd>
 
 
-<dt>start_dsn_mat</dt>
-<dd><p>Start design (a matrix), Default: NULL</p></dd>
+<dt>set_idx_1L_int</dt>
+<dd><p>Set index (an integer vector of length one), Default: 1</p></dd>
+
+
+<dt>start_dsn_mat_ls</dt>
+<dd><p>Start design (a list of matrices), Default: NULL</p></dd>
 
 </dl></div>
     <div class="section level2">
