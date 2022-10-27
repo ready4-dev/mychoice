@@ -361,6 +361,7 @@ add_choice_mdls <- function (mdls_ls = list(), dce_design_ls, mdl_params_ls, rec
 #' @param altv_nms_chr Alternative names (a character vector), Default: character(0)
 #' @param altv_to_modify_1L_int Alternative to modify (an integer vector of length one), Default: 1
 #' @param cost_range_dbl Cost range (a double vector), Default: 0:50
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
 #' @param with_chr With (a character vector), Default: 'mnl_mlogit_mdl'
 #' @return Analysis (a list)
 #' @rdname add_cost_comparison
@@ -372,7 +373,7 @@ add_choice_mdls <- function (mdls_ls = list(), dce_design_ls, mdl_params_ls, rec
 #' @importFrom stats setNames
 add_cost_comparison <- function (analysis_ls, choices_ls, dce_design_ls, mdls_ls, mdl_params_ls, 
     records_ls, altv_nms_chr = character(0), altv_to_modify_1L_int = 1, 
-    cost_range_dbl = 0:50, with_chr = "mnl_mlogit_mdl") 
+    cost_range_dbl = 0:50, set_idx_1L_int = integer(0), with_chr = "mnl_mlogit_mdl") 
 {
     analysis_ls$new_data_ls$cost_comparison_ls$ensemble_ls <- purrr::map(cost_range_dbl, 
         ~{
@@ -388,9 +389,10 @@ add_cost_comparison <- function (analysis_ls, choices_ls, dce_design_ls, mdls_ls
                 purrr::map_dfr(~predict_mkt_share(dce_design_ls = dce_design_ls, 
                   mdls_ls = mdls_ls, mdl_params_ls, new_choices_ls = .x, 
                   records_ls = records_ls, altv_nms_chr = altv_nms_chr, 
-                  with_1L_chr = with_1L_chr) %>% as.data.frame() %>% 
-                  t() %>% tibble::as_tibble()) %>% dplyr::mutate(`:=`(!!rlang::sym(records_ls$cost_var_nm_1L_chr), 
-                cost_range_dbl)) %>% dplyr::select(!!rlang::sym(records_ls$cost_var_nm_1L_chr), 
+                  set_idx_1L_int = set_idx_1L_int, with_1L_chr = with_1L_chr) %>% 
+                  as.data.frame() %>% t() %>% tibble::as_tibble()) %>% 
+                dplyr::mutate(`:=`(!!rlang::sym(records_ls$cost_var_nm_1L_chr), 
+                  cost_range_dbl)) %>% dplyr::select(!!rlang::sym(records_ls$cost_var_nm_1L_chr), 
                 dplyr::everything())
         }) %>% stats::setNames(paste0(with_chr, "_predd_tb"))
     return(analysis_ls)
@@ -462,7 +464,6 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' @param cost_att_idx_1L_int Cost attribute index (an integer vector of length one), Default: integer(0)
 #' @param cost_pfx_1L_chr Cost prefix (a character vector of length one), Default: ''
 #' @param cost_sfx_1L_chr Cost suffix (a character vector of length one), Default: ''
-#' @param design_mat Design (a matrix), Default: matrix(numeric(0))
 #' @param draws_1L_int Draws (an integer vector of length one), Default: 10
 #' @param nbr_of_blocks_1L_int Number of blocks (an integer vector of length one), Default: integer(0)
 #' @param nbr_of_sets_1L_int Number of sets (an integer vector of length one), Default: integer(0)
@@ -487,8 +488,8 @@ add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F
     add_cndt_design_mat = F, alternatives_chr = character(0), 
     att_lvls_tb = tibble::tibble(), block_idxs_ls = list(), choice_var_pfx_1L_chr = "DCE_B", 
     constraints_ls = list(), cost_att_idx_1L_int = integer(0), 
-    cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", design_mat = matrix(numeric(0)), 
-    draws_1L_int = 10L, nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
+    cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", draws_1L_int = 10L, 
+    nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
     opt_out_idx_1L_int = integer(0), parallel_1L_lgl = FALSE, 
     pilot_ds_tb = NULL, priors_dbl = numeric(0), priors_idx_1L_int = integer(0), 
     seed_1L_int = 1987, session_ls = list(), set_idx_1L_int = integer(0), 
@@ -508,9 +509,6 @@ add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F
     }
     if (!identical(att_lvls_tb, tibble::tibble())) {
         dce_design_ls$choice_sets_ls$att_lvls_tb <- att_lvls_tb
-    }
-    if (!identical(design_mat, matrix(numeric(0)))) {
-        dce_design_ls$design_mat <- design_mat
     }
     if (!identical(nbr_of_sets_1L_int, integer(0))) {
         dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int <- nbr_of_sets_1L_int
@@ -547,10 +545,6 @@ add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F
     if (is.null(dce_design_ls$cost_sfx_1L_chr) | !identical(cost_sfx_1L_chr, 
         "")) {
         dce_design_ls$cost_sfx_1L_chr <- cost_sfx_1L_chr
-    }
-    if (is.null(dce_design_ls$design_mat) | !identical(design_mat, 
-        matrix(numeric(0)))) {
-        dce_design_ls$design_mat <- design_mat
     }
     if (is.null(dce_design_ls$efnt_dsn_ls)) {
         dce_design_ls$efnt_dsn_ls <- list()
@@ -729,6 +723,7 @@ add_flags <- function (records_ls, age_var_nm_1L_chr = character(0), attempt_dur
 #' @param new_choices_ls New choices (a list)
 #' @param records_ls Records (a list)
 #' @param altv_nms_chr Alternative names (a character vector), Default: character(0)
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
 #' @param with_chr With (a character vector), Default: 'mnl_mlogit_mdl'
 #' @return Analysis (a list)
 #' @rdname add_new_choice_cmprsn
@@ -738,7 +733,8 @@ add_flags <- function (records_ls, age_var_nm_1L_chr = character(0), attempt_dur
 #' @importFrom rlang sym
 #' @importFrom dplyr mutate select everything
 add_new_choice_cmprsn <- function (analysis_ls, dce_design_ls, mdl_params_ls, new_choices_ls, 
-    records_ls, altv_nms_chr = character(0), with_chr = "mnl_mlogit_mdl") 
+    records_ls, altv_nms_chr = character(0), set_idx_1L_int = integer(0), 
+    with_chr = "mnl_mlogit_mdl") 
 {
     comparison_idx_1L_int <- ifelse(!"new_data_ls" %in% names(analysis_ls), 
         1, length(names(analysis_ls$new_data_ls)[startsWith(names(analysis_ls$new_data_ls), 
@@ -756,7 +752,7 @@ add_new_choice_cmprsn <- function (analysis_ls, dce_design_ls, mdl_params_ls, ne
                 "_prediction")), predict_mkt_share(dce_design_ls = dce_design_ls, 
                 mdls_ls = mdls_ls, mdl_params_ls, new_choices_ls = new_choices_ls, 
                 records_ls = records_ls, altv_nms_chr = altv_nms_chr, 
-                with_1L_chr = with_1L_chr)))
+                set_idx_1L_int = set_idx_1L_int, with_1L_chr = with_1L_chr)))
         }) %>% dplyr::mutate(Alternative = altv_nms_chr) %>% 
         dplyr::select(Alternative, dplyr::everything())
     return(analysis_ls)

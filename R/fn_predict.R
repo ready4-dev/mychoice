@@ -6,6 +6,7 @@
 #' @param new_choices_ls New choices (a list)
 #' @param records_ls Records (a list)
 #' @param altv_nms_chr Alternative names (a character vector), Default: character(0)
+#' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
 #' @param with_1L_chr With (a character vector of length one), Default: 'mnl_mlogit_mdl'
 #' @return Predicted share (a double vector)
 #' @rdname predict_mkt_share
@@ -14,9 +15,11 @@
 #' @importFrom stats setNames
 #' @keywords internal
 predict_mkt_share <- function (dce_design_ls, mdls_ls, mdl_params_ls, new_choices_ls, 
-    records_ls, altv_nms_chr = character(0), with_1L_chr = "mnl_mlogit_mdl") 
+    records_ls, altv_nms_chr = character(0), set_idx_1L_int = integer(0), 
+    with_1L_chr = "mnl_mlogit_mdl") 
 {
-    choices_ls <- make_choices_ls(dce_design_ls, new_choices_ls = new_choices_ls)
+    choices_ls <- make_choices_ls(dce_design_ls, new_choices_ls = new_choices_ls, 
+        set_idx_1L_int = set_idx_1L_int)
     replace_cards_int <- 1
     new_choices_dfidx <- make_new_choice_ds(choices_ls, dce_design_ls = dce_design_ls, 
         mdl_params_ls = mdl_params_ls, replace_cards_int = replace_cards_int, 

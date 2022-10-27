@@ -11,6 +11,7 @@ predict_mkt_share(
   new_choices_ls,
   records_ls,
   altv_nms_chr = character(0),
+  set_idx_1L_int = integer(0),
   with_1L_chr = "mnl_mlogit_mdl"
 )
 }
@@ -26,6 +27,8 @@ predict_mkt_share(
 \item{records_ls}{Records (a list)}
 
 \item{altv_nms_chr}{Alternative names (a character vector), Default: character(0)}
+
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{with_1L_chr}{With (a character vector of length one), Default: 'mnl_mlogit_mdl'}
 }

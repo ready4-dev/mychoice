@@ -8,7 +8,7 @@ make_choice_cards(
   dce_design_ls,
   block_idxs_ls = list(),
   seed_1L_int = 1987,
-  set_idx_1L_int = 1L,
+  set_idx_1L_int = integer(0),
   transform_att_nms_1L_lgl = T
 )
 }
@@ -19,7 +19,7 @@ make_choice_cards(
 
 \item{seed_1L_int}{Seed (an integer vector of length one), Default: 1987}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 1}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{transform_att_nms_1L_lgl}{Transform attribute names (a logical vector of length one), Default: T}
 }

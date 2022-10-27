@@ -16,7 +16,6 @@ add_design_spec(
   cost_att_idx_1L_int = integer(0),
   cost_pfx_1L_chr = "",
   cost_sfx_1L_chr = "",
-  design_mat = matrix(numeric(0)),
   draws_1L_int = 10L,
   nbr_of_blocks_1L_int = integer(0),
   nbr_of_sets_1L_int = integer(0),
@@ -53,8 +52,6 @@ add_design_spec(
 \item{cost_pfx_1L_chr}{Cost prefix (a character vector of length one), Default: ''}
 
 \item{cost_sfx_1L_chr}{Cost suffix (a character vector of length one), Default: ''}
-
-\item{design_mat}{Design (a matrix), Default: matrix(numeric(0))}
 
 \item{draws_1L_int}{Draws (an integer vector of length one), Default: 10}
 

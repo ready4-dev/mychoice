@@ -5,9 +5,11 @@ predict_mkt_share <- function(dce_design_ls,
                               records_ls,
                               #alternative_var_nm_1L_chr = "alternative",
                               altv_nms_chr = character(0),
+                              set_idx_1L_int = integer(0),
                               with_1L_chr = "mnl_mlogit_mdl"){
   choices_ls <- make_choices_ls(dce_design_ls,
-                                new_choices_ls = new_choices_ls)
+                                new_choices_ls = new_choices_ls,
+                                set_idx_1L_int = set_idx_1L_int)
   replace_cards_int <- 1#if(with_1L_chr %in% "mixl_mlogit_mdl"){1}else{integer(0)}
   new_choices_dfidx <- make_new_choice_ds(choices_ls,
                                           dce_design_ls = dce_design_ls,

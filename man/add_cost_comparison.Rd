@@ -14,6 +14,7 @@ add_cost_comparison(
   altv_nms_chr = character(0),
   altv_to_modify_1L_int = 1,
   cost_range_dbl = 0:50,
+  set_idx_1L_int = integer(0),
   with_chr = "mnl_mlogit_mdl"
 )
 }
@@ -35,6 +36,8 @@ add_cost_comparison(
 \item{altv_to_modify_1L_int}{Alternative to modify (an integer vector of length one), Default: 1}
 
 \item{cost_range_dbl}{Cost range (a double vector), Default: 0:50}
+
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{with_chr}{With (a character vector), Default: 'mnl_mlogit_mdl'}
 }

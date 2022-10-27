@@ -11,7 +11,7 @@ make_pilot_analysis_ls(
   choice_var_pfx_1L_chr = "DCE_B",
   draws_1L_int = 100L,
   seed_1L_int = 1987,
-  set_idx_1L_int = 1L
+  set_idx_1L_int = integer(0)
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ make_pilot_analysis_ls(
 
 \item{seed_1L_int}{Seed (an integer vector of length one), Default: 1987}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 1}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 }
 \value{
 Pilot analysis (a list)

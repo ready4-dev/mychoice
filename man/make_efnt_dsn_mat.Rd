@@ -9,7 +9,7 @@ make_efnt_dsn_mat(
   parallel_1L_lgl = FALSE,
   pilot_analysis_ls = list(),
   priors_idx_1L_int = 1L,
-  set_idx_1L_int = 1L,
+  set_idx_1L_int = integer(0),
   start_dsn_mat_ls = NULL
 )
 }
@@ -22,7 +22,7 @@ make_efnt_dsn_mat(
 
 \item{priors_idx_1L_int}{Priors index (an integer vector of length one), Default: 1}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 1}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{start_dsn_mat_ls}{Start design (a list of matrices), Default: NULL}
 }

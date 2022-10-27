@@ -10,7 +10,7 @@ transform_repln_ds_for_analysis(
   consent_1L_chr = "",
   person_uid_var_nm_1L_chr = "person_uid",
   seifa_lup = NULL,
-  set_idx_1L_int = 2L,
+  set_idx_1L_int = integer(0),
   write_to_1L_chr = character(0)
 )
 }
@@ -25,7 +25,7 @@ transform_repln_ds_for_analysis(
 
 \item{seifa_lup}{Socio-Economic Indices for Areas (a lookup table), Default: NULL}
 
-\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: 2}
+\item{set_idx_1L_int}{Set index (an integer vector of length one), Default: integer(0)}
 
 \item{write_to_1L_chr}{Write to (a character vector of length one), Default: character(0)}
 }

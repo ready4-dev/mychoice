@@ -354,6 +354,7 @@ add_cost_comparison <- function(analysis_ls,
                                 altv_nms_chr = character(0),
                                 altv_to_modify_1L_int = 1,
                                 cost_range_dbl = 0:50,
+                                set_idx_1L_int = integer(0),
                                 with_chr = "mnl_mlogit_mdl"){
   analysis_ls$new_data_ls$cost_comparison_ls$ensemble_ls <- purrr::map(cost_range_dbl,
                                                                        ~ {
@@ -370,6 +371,7 @@ add_cost_comparison <- function(analysis_ls,
                                          new_choices_ls = .x,
                                          records_ls = records_ls,
                                          altv_nms_chr = altv_nms_chr,
+                                         set_idx_1L_int = set_idx_1L_int,
                                          with_1L_chr = with_1L_chr) %>% as.data.frame() %>% t() %>% tibble::as_tibble()) %>%
       dplyr::mutate(!!rlang::sym(records_ls$cost_var_nm_1L_chr) := cost_range_dbl) %>%
       dplyr::select(!!rlang::sym(records_ls$cost_var_nm_1L_chr), dplyr::everything())
@@ -400,7 +402,7 @@ add_design_spec <- function(dce_design_ls = list(),
                             cost_att_idx_1L_int = integer(0),
                             cost_pfx_1L_chr = "",
                             cost_sfx_1L_chr = "",
-                            design_mat = matrix(numeric(0)),
+                            #design_mat = matrix(numeric(0)),
                             draws_1L_int = 10L,
                             nbr_of_blocks_1L_int = integer(0),
                             nbr_of_sets_1L_int = integer(0),
@@ -432,9 +434,9 @@ add_design_spec <- function(dce_design_ls = list(),
   if(!identical(att_lvls_tb, tibble::tibble())){
     dce_design_ls$choice_sets_ls$att_lvls_tb <- att_lvls_tb
   }
-  if(!identical(design_mat, matrix(numeric(0)))){
-    dce_design_ls$design_mat <- design_mat
-  }
+  # if(!identical(design_mat, matrix(numeric(0)))){
+  #   dce_design_ls$design_mat <- design_mat
+  # }
   if(!identical(nbr_of_sets_1L_int, integer(0))){
     dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int <- nbr_of_sets_1L_int
   }
@@ -467,9 +469,9 @@ add_design_spec <- function(dce_design_ls = list(),
   if(is.null(dce_design_ls$cost_sfx_1L_chr) | !identical(cost_sfx_1L_chr, "")){
     dce_design_ls$cost_sfx_1L_chr <- cost_sfx_1L_chr
   }
-  if(is.null(dce_design_ls$design_mat) | !identical(design_mat,matrix(numeric(0)))){
-    dce_design_ls$design_mat <- design_mat
-  }
+  # if(is.null(dce_design_ls$design_mat) | !identical(design_mat,matrix(numeric(0)))){
+  #   dce_design_ls$design_mat <- design_mat
+  # }
   if(is.null(dce_design_ls$efnt_dsn_ls)){
     dce_design_ls$efnt_dsn_ls <- list()
   }
@@ -616,6 +618,7 @@ add_new_choice_cmprsn <- function(analysis_ls,
                                   new_choices_ls,
                                   records_ls,
                                   altv_nms_chr = character(0),
+                                  set_idx_1L_int = integer(0),
                                   with_chr = "mnl_mlogit_mdl"){
   comparison_idx_1L_int <- ifelse(!"new_data_ls" %in% names(analysis_ls),
                                   1,
@@ -634,6 +637,7 @@ add_new_choice_cmprsn <- function(analysis_ls,
                                                                                           new_choices_ls = new_choices_ls,
                                                                                           records_ls = records_ls,
                                                                                           altv_nms_chr = altv_nms_chr,
+                                                                                          set_idx_1L_int = set_idx_1L_int,
                                                                                           with_1L_chr = with_1L_chr))
     }) %>%
     dplyr::mutate(Alternative = altv_nms_chr) %>%
