@@ -11,7 +11,7 @@ make_mxd_lgt_mdl_ls(
   records_ls,
   exclude_chr = character(0),
   formula_env = new.env(parent = globalenv()),
-  max_concepts_1L_int = 3L,
+  max_concepts_1L_int = 2L,
   min_threshold_1L_int = 1L,
   return_1L_chr = "mixl"
 )
@@ -29,7 +29,7 @@ make_mxd_lgt_mdl_ls(
 
 \item{formula_env}{Formula (an environment), Default: new.env(parent = globalenv())}
 
-\item{max_concepts_1L_int}{Maximum concepts (an integer vector of length one), Default: 3}
+\item{max_concepts_1L_int}{Maximum concepts (an integer vector of length one), Default: 2}
 
 \item{min_threshold_1L_int}{Minimum threshold (an integer vector of length one), Default: 1}
 

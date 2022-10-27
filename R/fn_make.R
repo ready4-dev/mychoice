@@ -1077,6 +1077,52 @@ make_mdl_params_ls <- function (candidate_predrs_tb, dce_design_ls, records_ls, 
     mdl_params_ls$draws_1L_int <- draws_1L_int
     return(mdl_params_ls)
 }
+#' Make model summary
+#' @description make_mdl_smry() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make model summary. The function returns Return (an output object of multiple potential types).
+#' @param model_mdl Model (a model)
+#' @param return_1L_chr Return (a character vector of length one), Default: 'coefficients'
+#' @return Return (an output object of multiple potential types)
+#' @rdname make_mdl_smry
+#' @export 
+#' @importFrom gmnl getSummary.gmnl
+#' @importFrom purrr discard
+#' @importFrom tibble rownames_to_column as_tibble tibble
+#' @importFrom dplyr rename mutate filter
+#' @importFrom stringr str_squish
+#' @importFrom rlang sym
+#' @keywords internal
+make_mdl_smry <- function (model_mdl, return_1L_chr = "coefficients") 
+{
+    smry_ls <- summary(model_mdl)
+    if ("gmnl" %in% class(model_mdl)) {
+        smry_ls <- gmnl::getSummary.gmnl(model_mdl)
+        coef_mat <- smry_ls$coef
+        perf_tb <- smry_ls$sumstat %>% purrr::discard(is.na) %>% 
+            as.data.frame() %>% tibble::rownames_to_column("Statistic") %>% 
+            tibble::as_tibble() %>% dplyr::rename(Value = ".")
+        p_var_nm_1L_chr <- "p"
+    }
+    else {
+        coef_mat <- smry_ls$CoefTable
+        perf_tb <- tibble::tibble(Statistic = c("logLik", "AIC", 
+            "BIC", "N"), Value = c(smry_ls$logLik, AIC(model_mdl), 
+            BIC(model_mdl), smry_ls$freq %>% sum()))
+        p_var_nm_1L_chr <- "Pr(>|z|)"
+    }
+    call_1L_chr <- smry_ls$call %>% deparse() %>% paste0(collapse = "") %>% 
+        stringr::str_squish()
+    coef_tb <- coef_mat %>% as.data.frame() %>% tibble::rownames_to_column("Parameter") %>% 
+        tibble::as_tibble() %>% dplyr::mutate(sign = cut(!!rlang::sym(p_var_nm_1L_chr), 
+        breaks = c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf), labels = c("***", 
+            "**", "*", ".", "n.s."), right = FALSE))
+    if (return_1L_chr == "coefficients") 
+        return_xx <- coef_tb
+    if (return_1L_chr == "performance") 
+        return_xx <- perf_tb %>% dplyr::filter(!is.na(Value))
+    if (return_1L_chr == "call") 
+        return_xx <- call_1L_chr
+    return(return_xx)
+}
 #' Make mixed logit model list
 #' @description make_mxd_lgt_mdl_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make mixed logit model list. The function returns Mixed logit (a list of models).
 #' @param att_predn_mdls_ls Attribute prediction models (a list)
@@ -1085,7 +1131,7 @@ make_mdl_params_ls <- function (candidate_predrs_tb, dce_design_ls, records_ls, 
 #' @param records_ls Records (a list)
 #' @param exclude_chr Exclude (a character vector), Default: character(0)
 #' @param formula_env Formula (an environment), Default: new.env(parent = globalenv())
-#' @param max_concepts_1L_int Maximum concepts (an integer vector of length one), Default: 3
+#' @param max_concepts_1L_int Maximum concepts (an integer vector of length one), Default: 2
 #' @param min_threshold_1L_int Minimum threshold (an integer vector of length one), Default: 1
 #' @param return_1L_chr Return (a character vector of length one), Default: 'mixl'
 #' @return Mixed logit (a list of models)
@@ -1098,7 +1144,7 @@ make_mdl_params_ls <- function (candidate_predrs_tb, dce_design_ls, records_ls, 
 #' @keywords internal
 make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls, records_ls, 
     exclude_chr = character(0), formula_env = new.env(parent = globalenv()), 
-    max_concepts_1L_int = 3L, min_threshold_1L_int = 1L, return_1L_chr = "mixl") 
+    max_concepts_1L_int = 2L, min_threshold_1L_int = 1L, return_1L_chr = "mixl") 
 {
     return_ls <- NULL
     signft_concepts_chr <- get_signft_concepts(att_predn_mdls_ls, 
@@ -1110,11 +1156,10 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
             signft_concepts_chr)
         choice_atts_chr <- signft_concepts_tb$predicts_ls %>% 
             purrr::flatten_chr() %>% unique()
-        candidate_predrs_chr <- signft_concepts_tb$predictors_ls %>% 
-            purrr::flatten_chr()
-        candidate_predrs_ls <- signft_concepts_chr %>% purrr::map(~intersect(mdl_params_ls$candidate_predrs_tb %>% 
-            dplyr::filter(concept_chr == .x) %>% dplyr::pull(short_name_chr), 
-            candidate_predrs_chr)) %>% stats::setNames(signft_concepts_chr)
+        candidate_predrs_ls <- signft_concepts_chr %>% purrr::map(~intersect(make_candidate_predrs_chr(mdl_params_ls$candidate_predrs_tb, 
+            types_chr = mdl_params_ls$types_chr), mdl_params_ls$candidate_predrs_tb %>% 
+            dplyr::filter(concept_chr == .x) %>% dplyr::pull(short_name_chr))) %>% 
+            stats::setNames(signft_concepts_chr)
         combns_ls <- 1:max_concepts_1L_int %>% purrr::map(~{
             combns_mat <- utils::combn(signft_concepts_chr, .x)
             1:ncol(combns_mat) %>% purrr::map(~combns_mat[, .x])
@@ -1128,9 +1173,15 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
                 purrr::flatten_chr() %>% unique() %>% intersect(choice_atts_chr)
             candidate_choice_predrs_ls <- purrr::map(atts_chr, 
                 ~{
-                  intersect(signft_concepts_tb %>% dplyr::pull(paste0(.x, 
-                    "_predrs_chr")) %>% purrr::discard(is.na), 
-                    predictors_chr)
+                  slimmed_predrs_chr <- intersect(signft_concepts_tb %>% 
+                    dplyr::pull(paste0(.x, "_predrs_chr")) %>% 
+                    purrr::discard(is.na), predictors_chr)
+                  if (identical(slimmed_predrs_chr, character(0))) {
+                    character(0)
+                  }
+                  else {
+                    predictors_chr
+                  }
                 }) %>% stats::setNames(atts_chr) %>% purrr::compact()
         })
         mxd_lgt_mdl_ls <- purrr::map(mvars_ls_ls, ~{
@@ -1156,7 +1207,8 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
             predn_mdl <- fit_choice_mdl(dce_design_ls, mdl_params_ls = mdl_params_ls, 
                 records_ls = records_ls, return_1L_chr = return_1L_chr, 
                 formula_env = formula_env, indl_predrs_chr = mvar_ls %>% 
-                  purrr::flatten_chr() %>% unique(), mvar_ls = mvar_ls)
+                  purrr::flatten_chr() %>% unique(), correlation_1L_lgl = T, 
+                mvar_ls = mvar_ls)
             predn_mdl
         }) %>% stats::setNames(combns_ls %>% purrr::map_chr(~paste0(.x, 
             collapse = "_")))

@@ -12,7 +12,7 @@ add_choice_mdls(
   exclude_chr = character(0),
   indl_predrs_chr = NA_character_,
   include_int = 1:4,
-  max_concepts_1L_int = 3L,
+  max_concepts_1L_int = 2L,
   min_threshold_1L_int = 2L,
   nbr_of_clss_1L_int = 2L,
   purpose_chr = "attributes",
@@ -35,7 +35,7 @@ add_choice_mdls(
 
 \item{include_int}{Include (an integer vector), Default: 1:4}
 
-\item{max_concepts_1L_int}{Maximum concepts (an integer vector of length one), Default: 3}
+\item{max_concepts_1L_int}{Maximum concepts (an integer vector of length one), Default: 2}
 
 \item{min_threshold_1L_int}{Minimum threshold (an integer vector of length one), Default: 2}
 

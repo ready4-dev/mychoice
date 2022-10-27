@@ -62,6 +62,7 @@ readLines(".github/workflows/R-CMD-check.yaml") %>%
   stringr::str_replace_all("r-lib/actions/setup-r@master","r-lib/actions/setup-r@v2") %>%
   stringr::str_replace_all("r-lib/actions/setup-pandoc@master","r-lib/actions/setup-pandoc@v2") %>%
   writeLines(con = ".github/workflows/R-CMD-check.yaml")
+# May need to ad lwgeom pkg
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
 # devtools::build_vignettes()

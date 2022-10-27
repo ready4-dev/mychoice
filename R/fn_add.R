@@ -147,13 +147,13 @@ add_analysis <- function (analysis_ls = list(), mdls_ls, what_chr = c("wtp"),
         what_chr <- c(what_chr, "prpns_sample", "prpns_mnl") %>% 
             unique()
     }
-    if ("wtp_gmnl" %in% what_chr) {
+    if (("wtp_gmnl" %in% what_chr) & !is.null(mdls_ls$gmnl_wtp_mdl)) {
         analysis_ls$wtp_gmnl_smry_ls <- make_gmnl_mdl_smry(mdls_ls$gmnl_wtp_mdl)
     }
-    if ("wtp_gmnl_cor" %in% what_chr) {
+    if (("wtp_gmnl_cor" %in% what_chr) & !is.null(mdls_ls$gmnl_wtp_cor_mdl)) {
         analysis_ls$wtp_gmnl_cor_smry_ls <- make_gmnl_mdl_smry(mdls_ls$gmnl_wtp_cor_mdl)
     }
-    if ("wtp_smnl" %in% what_chr) {
+    if (("wtp_smnl" %in% what_chr) & !is.null(mdls_ls$smnl_mdl)) {
         analysis_ls$wtp_smnl_smry_ls <- make_gmnl_mdl_smry(mdls_ls$smnl_mdl)
         analysis_ls$wtp_smnl_price_num <- c(-exp(stats::coef(mdls_ls$smnl_mdl)["het.(Intercept)"]), 
             {
@@ -161,7 +161,7 @@ add_analysis <- function (analysis_ls = list(), mdls_ls, what_chr = c("wtp"),
                   stats::vcov(mdls_ls$smnl_mdl), ses = T)
             })
     }
-    if ("wtp_utl_sp" %in% what_chr) {
+    if (("wtp_utl_sp" %in% what_chr) & !is.null(mdls_ls$mnl_mdl)) {
         analysis_ls$wtp_utl_sp_mat <- make_wtp_mat(mdls_ls$mnl_mdl, 
             cost_var_nm_1L_chr = records_ls$cost_var_nm_1L_chr)
     }
@@ -255,7 +255,7 @@ add_attempt_dur_red_flag <- function (data_tb, attempt_dur_min_1L_dbl, attempt_d
 #' @param exclude_chr Exclude (a character vector), Default: character(0)
 #' @param indl_predrs_chr Individual predictors (a character vector), Default: 'NA'
 #' @param include_int Include (an integer vector), Default: 1:4
-#' @param max_concepts_1L_int Maximum concepts (an integer vector of length one), Default: 3
+#' @param max_concepts_1L_int Maximum concepts (an integer vector of length one), Default: 2
 #' @param min_threshold_1L_int Minimum threshold (an integer vector of length one), Default: 2
 #' @param nbr_of_clss_1L_int Number of classes (an integer vector of length one), Default: 2
 #' @param purpose_chr Purpose (a character vector), Default: 'attributes'
@@ -266,7 +266,7 @@ add_attempt_dur_red_flag <- function (data_tb, attempt_dur_min_1L_dbl, attempt_d
 #' @export 
 add_choice_mdls <- function (mdls_ls = list(), dce_design_ls, mdl_params_ls, records_ls, 
     exclude_chr = character(0), indl_predrs_chr = NA_character_, 
-    include_int = 1:4, max_concepts_1L_int = 3L, min_threshold_1L_int = 2L, 
+    include_int = 1:4, max_concepts_1L_int = 2L, min_threshold_1L_int = 2L, 
     nbr_of_clss_1L_int = 2L, purpose_chr = "attributes", significant_at_1L_dbl = 0.05, 
     ...) 
 {
@@ -284,17 +284,19 @@ add_choice_mdls <- function (mdls_ls = list(), dce_design_ls, mdl_params_ls, rec
     if ("heterogeneity" %in% purpose_chr) {
         if (1 %in% include_int) 
             mdls_ls$mixl_mdl <- fit_choice_mdl(dce_design_ls, 
-                mdl_params_ls = mdl_params_ls, records_ls = records_ls, 
-                return_1L_chr = "mixl", ...)
+                correlation_1L_lgl = T, mdl_params_ls = mdl_params_ls, 
+                records_ls = records_ls, return_1L_chr = "mixl", 
+                ...)
         if (2 %in% include_int) 
             mdls_ls$mixl_mlogit_mdl <- fit_choice_mdl(dce_design_ls, 
-                mdl_params_ls = mdl_params_ls, records_ls = records_ls, 
-                use_mlogit_pkg_1L_lgl = T, return_1L_chr = "mixl", 
-                ...)
+                correlation_1L_lgl = T, mdl_params_ls = mdl_params_ls, 
+                records_ls = records_ls, use_mlogit_pkg_1L_lgl = T, 
+                return_1L_chr = "mixl", ...)
         if (3 %in% include_int) 
             mdls_ls$gmnl_mdl <- fit_choice_mdl(dce_design_ls, 
-                mdl_params_ls = mdl_params_ls, records_ls = records_ls, 
-                return_1L_chr = "gmnl", ...)
+                correlation_1L_lgl = T, mdl_params_ls = mdl_params_ls, 
+                records_ls = records_ls, return_1L_chr = "gmnl", 
+                ...)
     }
     if ("interactions" %in% purpose_chr) {
         if (1 %in% include_int) 

@@ -800,7 +800,7 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
                                  records_ls,
                                  exclude_chr = character(0),
                                  formula_env = new.env(parent = globalenv()),
-                                 max_concepts_1L_int = 3L,
+                                 max_concepts_1L_int = 2L,
                                  min_threshold_1L_int = 1L,
                                  return_1L_chr = "mixl"){
   return_ls <- NULL
@@ -810,12 +810,13 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
     signft_concepts_tb <- make_signft_concepts_tbl(att_predn_mdls_ls, mdl_params_ls) %>%
       dplyr::filter(concept_chr %in% signft_concepts_chr)
     choice_atts_chr <- signft_concepts_tb$predicts_ls %>% purrr::flatten_chr() %>% unique()
-    candidate_predrs_chr <- signft_concepts_tb$predictors_ls %>% purrr::flatten_chr()
+    #candidate_predrs_chr <- signft_concepts_tb$predictors_ls %>% purrr::flatten_chr()
     candidate_predrs_ls <- signft_concepts_chr %>%
-      purrr::map(~intersect(mdl_params_ls$candidate_predrs_tb %>%
-                              dplyr::filter(concept_chr == .x) %>%
-                              dplyr::pull(short_name_chr),
-                            candidate_predrs_chr)) %>%
+      purrr::map(~ intersect(make_candidate_predrs_chr(mdl_params_ls$candidate_predrs_tb,types_chr = mdl_params_ls$types_chr),
+                             mdl_params_ls$candidate_predrs_tb %>%
+                               dplyr::filter(concept_chr == .x) %>%
+                               dplyr::pull(short_name_chr)
+      )) %>%
       stats::setNames(signft_concepts_chr)
     combns_ls <- 1:max_concepts_1L_int %>%
       purrr::map(~{
@@ -836,9 +837,14 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
           intersect(choice_atts_chr)
         candidate_choice_predrs_ls <- purrr::map(atts_chr,
                                                  ~ {
-                                                   intersect(signft_concepts_tb %>%
-                                                               dplyr::pull(paste0(.x,"_predrs_chr")) %>%
-                                                               purrr::discard(is.na), predictors_chr)
+                                                   slimmed_predrs_chr <- intersect(signft_concepts_tb %>%
+                                                                                     dplyr::pull(paste0(.x,"_predrs_chr")) %>%
+                                                                                     purrr::discard(is.na), predictors_chr)
+                                                   if(identical(slimmed_predrs_chr,character(0))){
+                                                     character(0)
+                                                   }else{
+                                                     predictors_chr
+                                                   }
                                                  }) %>%
           stats::setNames(atts_chr) %>%
           purrr::compact()
@@ -869,12 +875,42 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
                                                                return_1L_chr = return_1L_chr,
                                                                formula_env = formula_env,
                                                                indl_predrs_chr = mvar_ls %>% purrr::flatten_chr() %>% unique(),
+                                                               correlation_1L_lgl = T,
                                                                mvar_ls = mvar_ls)
                                    predn_mdl
                                  }) %>%
       stats::setNames(combns_ls %>% purrr::map_chr(~paste0(.x,collapse = "_")))
   }
   return(mxd_lgt_mdl_ls)
+}
+make_mdl_smry <- function(model_mdl,
+                          return_1L_chr = "coefficients"){
+  smry_ls <- summary(model_mdl)
+  if("gmnl" %in% class(model_mdl)#startsWith(deparse(smry_ls$call)[1],"gmnl")
+  ){
+    smry_ls <- gmnl::getSummary.gmnl(model_mdl)
+    coef_mat <- smry_ls$coef
+    perf_tb <- smry_ls$sumstat %>% purrr::discard(is.na) %>% as.data.frame() %>% tibble::rownames_to_column("Statistic") %>%
+      tibble::as_tibble() %>% dplyr::rename(Value = ".")
+    p_var_nm_1L_chr <- "p"
+  }else{
+    coef_mat <- smry_ls$CoefTable
+    perf_tb <- tibble::tibble(Statistic = c("logLik","AIC", "BIC","N"),
+                              Value = c(smry_ls$logLik,AIC(model_mdl),BIC(model_mdl),smry_ls$freq %>% sum()))
+    p_var_nm_1L_chr <-"Pr(>|z|)"
+  }
+  call_1L_chr <- smry_ls$call %>% deparse() %>% paste0(collapse = "") %>% stringr::str_squish()
+  coef_tb <- coef_mat %>%  as.data.frame() %>% tibble::rownames_to_column("Parameter") %>%
+    tibble::as_tibble() %>% dplyr::mutate(sign = cut(!!rlang::sym(p_var_nm_1L_chr), breaks = c(-Inf, 0.001, 0.01, 0.05, 0.1,Inf),
+                                                     labels = c("***", "**", "*", ".","n.s."), right = FALSE))
+  if(return_1L_chr == "coefficients")
+    return_xx <- coef_tb
+  if(return_1L_chr == "performance")
+    return_xx <- perf_tb %>%
+    dplyr::filter(!is.na(Value))
+  if(return_1L_chr == "call")
+    return_xx <- call_1L_chr
+  return(return_xx)
 }
 make_nbr_of_lvls <- function(att_lvls_tb,
                              return_1L_chr = "all"){

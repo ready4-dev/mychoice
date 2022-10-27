@@ -124,19 +124,19 @@ add_analysis <- function(analysis_ls = list(),
   if("share" %in% what_chr){
     what_chr <- c(what_chr,"prpns_sample","prpns_mnl") %>% unique()
   }
-  if("wtp_gmnl" %in% what_chr){
+  if(("wtp_gmnl" %in% what_chr) & !is.null(mdls_ls$gmnl_wtp_mdl)){
     analysis_ls$wtp_gmnl_smry_ls <- make_gmnl_mdl_smry(mdls_ls$gmnl_wtp_mdl)
   }
-  if("wtp_gmnl_cor" %in% what_chr){
-    analysis_ls$wtp_gmnl_cor_smry_ls <-make_gmnl_mdl_smry(mdls_ls$gmnl_wtp_cor_mdl)
+  if(("wtp_gmnl_cor" %in% what_chr) & !is.null(mdls_ls$gmnl_wtp_cor_mdl)){
+    analysis_ls$wtp_gmnl_cor_smry_ls <- make_gmnl_mdl_smry(mdls_ls$gmnl_wtp_cor_mdl)
   }
-  if("wtp_smnl" %in% what_chr){
+  if(("wtp_smnl" %in% what_chr) & !is.null(mdls_ls$smnl_mdl)){
     analysis_ls$wtp_smnl_smry_ls <- make_gmnl_mdl_smry(mdls_ls$smnl_mdl)
     analysis_ls$wtp_smnl_price_num <- c(-exp(stats::coef(mdls_ls$smnl_mdl)["het.(Intercept)"]),
                                         {msm::deltamethod(~ -exp(x6), stats::coef(mdls_ls$smnl_mdl),
                                                           stats::vcov(mdls_ls$smnl_mdl),ses=T)})
   }
-  if("wtp_utl_sp" %in% what_chr){
+  if(("wtp_utl_sp" %in% what_chr) & !is.null(mdls_ls$mnl_mdl)){
     analysis_ls$wtp_utl_sp_mat <- make_wtp_mat(mdls_ls$mnl_mdl,
                                                cost_var_nm_1L_chr = records_ls$cost_var_nm_1L_chr)
   }
@@ -202,7 +202,7 @@ add_choice_mdls <- function(mdls_ls = list(),
                             exclude_chr = character(0),
                             indl_predrs_chr = NA_character_,
                             include_int = 1:4,
-                            max_concepts_1L_int = 3L,
+                            max_concepts_1L_int = 2L,
                             min_threshold_1L_int = 2L,
                             nbr_of_clss_1L_int = 2L,
                             purpose_chr = "attributes",
@@ -226,12 +226,14 @@ add_choice_mdls <- function(mdls_ls = list(),
   if("heterogeneity" %in% purpose_chr){
     if(1 %in% include_int)
       mdls_ls$mixl_mdl <- fit_choice_mdl(dce_design_ls,
+                                         correlation_1L_lgl = T,
                                          mdl_params_ls = mdl_params_ls,
                                          records_ls = records_ls,
                                          return_1L_chr = "mixl",
                                          ...)
     if(2 %in% include_int)
       mdls_ls$mixl_mlogit_mdl <- fit_choice_mdl(dce_design_ls,
+                                                correlation_1L_lgl = T,
                                                 mdl_params_ls = mdl_params_ls,
                                                 records_ls = records_ls,
                                                 use_mlogit_pkg_1L_lgl = T,
@@ -239,6 +241,7 @@ add_choice_mdls <- function(mdls_ls = list(),
                                                 ...)
     if(3 %in% include_int)
       mdls_ls$gmnl_mdl <- fit_choice_mdl(dce_design_ls,
+                                         correlation_1L_lgl = T,
                                          mdl_params_ls = mdl_params_ls,
                                          records_ls = records_ls,
                                          return_1L_chr = "gmnl",
