@@ -1,3 +1,282 @@
+transform_descvs_tb <- function(descvs_tb){
+  tfd_descvs_tb <- descvs_tb %>%
+    dplyr::mutate(missing_var_chr = Measure %>% purrr::map2_chr(Concept,
+                                                                ~ ifelse(.x =="Missing",
+                                                                         paste0(.y,"_Missing"),
+                                                                         "Ignore"))) %>%
+    dplyr::group_by(missing_var_chr) %>%
+    dplyr::mutate(mssng_idx = 1:dplyr::n()) %>%
+    dplyr::mutate(keep_lgl = (mssng_idx == max(mssng_idx)) | (missing_var_chr == "Ignore")) %>%
+    dplyr::filter(keep_lgl) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(-c(missing_var_chr, mssng_idx, keep_lgl))
+  return(tfd_descvs_tb)
+}
+transform_mdl_smry <- function(mdl_smry_tb,
+                               dce_design_ls,
+                               records_ls,
+                               mdl_params_ls = NULL,
+                               confidence_intvl_1L_chr = character(0),
+                               confidence_intvl_int = integer(0),
+                               digits_1L_int = integer(0),
+                               opt_out_nm_1L_chr = "Opt out",
+                               stat_1L_chr = "z"){
+  names_chr<- c("Parameter","Estimate", "Std. Error",
+                paste0(stat_1L_chr,"-value"),
+                paste0("Pr(>|",stat_1L_chr,"|)"),
+                #"lwr","upr",
+                "signif.")
+  if(!identical(confidence_intvl_int, integer(0))){
+    names_chr <- append(names_chr,
+                        c("lwr","upr"),
+                        after = confidence_intvl_int[1]-1)
+  }
+  names(mdl_smry_tb) <- names_chr
+  if(!identical(confidence_intvl_1L_chr,character(0))){
+    mdl_smry_tb <- mdl_smry_tb %>%
+      dplyr::mutate(CI = lwr %>% purrr::map2_chr(upr,
+                                                 ~paste0("(",.x,", ",.y,")")))
+  }
+  mdl_smry_tb <- mdl_smry_tb %>%
+    dplyr::select(c("Parameter","Estimate",
+                    confidence_intvl_1L_chr,#"CI",
+                    "Std. Error",
+                    paste0(stat_1L_chr,"-value"),
+                    paste0("Pr(>|",stat_1L_chr,"|)"),
+                    "signif."))
+  fctr_combined_ls <- make_fctr_atts_dummy_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                   flatten_1L_lgl = F)
+  fctr_separate_ls <- get_fctr_atts_dummy_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                  flatten_1L_lgl = F)
+  classes_ls <- mdl_smry_tb$Parameter %>% strsplit("[.]")
+  class_lgl <- classes_ls %>% purrr::map_lgl(~.x[1]=="class")
+  if(class_lgl %>% any())
+    mdl_smry_tb <- mdl_smry_tb %>%
+    dplyr::mutate(Class = class_lgl %>% purrr::map2_chr(classes_ls,
+                                                        ~ifelse(.x,
+                                                                paste0(.y[1],".",.y[2],"."),
+                                                                ifelse(startsWith(.y[1],"(class)"),
+                                                                       paste0("class.",
+                                                                              stringr::str_sub(.y[1],start=8)),
+                                                                       "")))) %>%
+    dplyr::mutate(Parameter = Class %>% purrr::map2_chr(Parameter,
+                                                        ~ ifelse(.x=="",
+                                                                 .y,
+                                                                 ifelse(startsWith(.y,"(class)"),
+                                                                        paste0("Class ", stringr::str_sub(.y,start = 8)),
+                                                                        stringr::str_remove(.y,.x)))))
+  mdl_smry_tb <- purrr::reduce(1:length(fctr_combined_ls),
+                               .init = mdl_smry_tb %>% dplyr::mutate(Concept = NA_character_),
+                               ~ {
+                                 idx_1L_int <- .y
+                                 dummys_chr <- fctr_combined_ls[[idx_1L_int]]
+                                 combined_chr <- fctr_separate_ls[[idx_1L_int]]
+                                 concept_1L_chr <- names(fctr_separate_ls)[idx_1L_int]
+                                 tbl_tb <- .x %>%
+                                   dplyr::mutate(Concept = Parameter %>%
+                                                   purrr::map2_chr(Concept,
+                                                                   ~ ifelse(.x %in% dummys_chr,
+                                                                            concept_1L_chr,
+                                                                            ifelse(is.na(.y),
+                                                                                   .x,
+                                                                                   .y))))
+                                 tbl_tb %>%
+                                   dplyr::mutate(Parameter = Parameter %>%
+                                                   purrr::map_chr(~ifelse(.x %in% dummys_chr,
+                                                                          ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                                                   match_value_xx = combined_chr[.x==dummys_chr],
+                                                                                                   match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                                                   target_var_nm_1L_chr = "short_nms_chr"),
+                                                                          ifelse(.x %in% get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont"),
+                                                                                 ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                                                          match_value_xx = .x,
+                                                                                                          match_var_nm_1L_chr = "attribute_chr",
+                                                                                                          target_var_nm_1L_chr = "short_nms_chr") %>% unique(),
+                                                                                 ifelse(.x == records_ls$opt_out_var_nm_1L_chr,
+                                                                                        opt_out_nm_1L_chr,
+                                                                                        .x)))))
+                               }) %>%
+    dplyr::select(Concept, dplyr::everything())
+  if(!is.null(mdl_params_ls)){
+    att_lvls_chr <- c(fctr_combined_ls %>% purrr::flatten_chr(),
+                      get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont"),
+                      records_ls$opt_out_var_nm_1L_chr)
+    att_concepts_chr <- c(1:length(fctr_separate_ls) %>% purrr::map(~rep(names(fctr_separate_ls)[.x],length(fctr_separate_ls[[.x]]))) %>% purrr::flatten_chr(),
+                          get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont"),
+                          opt_out_nm_1L_chr)
+    att_short_nms_chr <- c(fctr_separate_ls %>% purrr::flatten_chr() %>% purrr::map_chr(~ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                                                                  match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                                                                  match_value_xx = .x,
+                                                                                                                  target_var_nm_1L_chr = "short_nms_chr")),
+                           get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb, return_1L_chr = "cont")  %>% purrr::map_chr(~ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                                                                                                    match_var_nm_1L_chr = "attribute_chr",
+                                                                                                                                                    match_value_xx = .x,
+                                                                                                                                                    target_var_nm_1L_chr = "short_nms_chr") %>% unique()),
+                           opt_out_nm_1L_chr
+    )
+    mdl_smry_tb <- mdl_smry_tb %>%
+      dplyr::mutate(Concept = dplyr::case_when(Concept %>%
+                                                 purrr::map_lgl(~{
+                                                   concept_1L_chr <- .x
+                                                   paste0(".",mdl_params_ls$candidate_predrs_tb$short_name_chr) %>%
+                                                     purrr::map_lgl(~endsWith(concept_1L_chr,.x)) %>%
+                                                     any()
+                                                 }) ~  Concept %>% strsplit( "[.]") %>%
+                                                 purrr::map_chr(~{
+                                                   person_features_chr <- .x[.x %in% mdl_params_ls$candidate_predrs_tb$short_name_chr]
+                                                   att_features_chr <- setdiff(.x,person_features_chr)
+                                                   att_features_1L_chr <- att_concepts_chr[which(att_features_chr==att_lvls_chr)] %>% ready4::make_list_phrase()
+                                                   if(identical(person_features_chr, character(0))){
+                                                     person_features_chr <- NA_character_
+                                                   }else{
+                                                     paste0(att_features_1L_chr,
+                                                            " x ",
+                                                            person_features_chr %>%
+                                                              purrr::map_chr(~paste0(ready4::get_from_lup_obj(mdl_params_ls$candidate_predrs_tb,
+                                                                                                              match_var_nm_1L_chr = "short_name_chr",
+                                                                                                              match_value_xx = .x,
+                                                                                                              target_var_nm_1L_chr = "concept_chr") %>%
+                                                                                       Hmisc::capitalize())) %>%
+                                                              ready4::make_list_phrase())
+                                                   }
+                                                 }),
+                                               Concept %>%
+                                                 purrr::map_lgl(~{
+                                                   concept_1L_chr <- .x
+                                                   paste0(":",mdl_params_ls$candidate_predrs_tb$short_name_chr) %>%
+                                                     purrr::map2_lgl(paste0(mdl_params_ls$candidate_predrs_tb$short_name_chr,":"),
+                                                                     ~endsWith(concept_1L_chr,.x)|startsWith(concept_1L_chr,.y)) %>%
+                                                     any()
+                                                 }) ~ Concept %>% strsplit( "[:]") %>%
+                                                 purrr::map_chr(~{
+                                                   person_features_chr <- .x[.x %in% mdl_params_ls$candidate_predrs_tb$short_name_chr]
+                                                   cls_features_1L_chr <- setdiff(.x,person_features_chr)
+                                                   if(identical(person_features_chr, character(0))){
+                                                     person_features_chr <- NA_character_
+                                                   }else{
+                                                     stringr::str_replace(cls_features_1L_chr,"class","Class ")
+                                                   }
+                                                 }),
+                                               T ~ Concept),
+                    Parameter = dplyr::case_when(Parameter %>%
+                                                   purrr::map_lgl(~{
+                                                     concept_1L_chr <- .x
+                                                     paste0(".",mdl_params_ls$candidate_predrs_tb$short_name_chr) %>%
+                                                       purrr::map_lgl(~endsWith(concept_1L_chr,.x)) %>%
+                                                       any()
+                                                   }) ~  Parameter %>% strsplit( "[.]") %>%
+                                                   purrr::map_chr(~{
+                                                     person_features_chr <- .x[.x %in% mdl_params_ls$candidate_predrs_tb$short_name_chr]
+                                                     att_features_chr <- setdiff(.x,person_features_chr)
+                                                     att_lvl_nm_1L_chr <- att_short_nms_chr[which(att_features_chr==att_lvls_chr)] %>% ready4::make_list_phrase()
+                                                     if(identical(person_features_chr, character(0))){
+                                                       person_features_chr <- NA_character_
+                                                     }else{
+                                                       person_features_chr %>%
+                                                         purrr::map_chr(~paste0(att_lvl_nm_1L_chr,
+                                                                                " x ",
+                                                                                ready4::get_from_lup_obj(mdl_params_ls$candidate_predrs_tb,
+                                                                                                         match_var_nm_1L_chr = "short_name_chr",
+                                                                                                         match_value_xx = .x,
+                                                                                                         target_var_nm_1L_chr = "long_name_chr")
+                                                         )) %>%
+                                                         ready4::make_list_phrase()
+                                                     }
+                                                   }),
+                                                 Parameter %>%
+                                                   purrr::map_lgl(~{
+                                                     concept_1L_chr <- .x
+                                                     paste0(":",mdl_params_ls$candidate_predrs_tb$short_name_chr) %>%
+                                                       purrr::map2_lgl(paste0(mdl_params_ls$candidate_predrs_tb$short_name_chr,":"),
+                                                                       ~endsWith(concept_1L_chr,.x)|startsWith(concept_1L_chr,.y)) %>%
+                                                       any()
+                                                   }) ~ Parameter %>% strsplit( "[:]") %>%
+                                                   purrr::map_chr(~{
+                                                     person_features_chr <- .x[.x %in% mdl_params_ls$candidate_predrs_tb$short_name_chr]
+                                                     cls_features_1L_chr <- setdiff(.x,person_features_chr)
+                                                     if(identical(person_features_chr, character(0))){
+                                                       person_features_chr <- NA_character_
+                                                     }else{
+                                                       paste0(stringr::str_replace(cls_features_1L_chr,"class","Class "),
+                                                              " x ",
+                                                              person_features_chr %>%
+                                                                purrr::map_chr(~paste0(ready4::get_from_lup_obj(mdl_params_ls$candidate_predrs_tb,
+                                                                                                                match_var_nm_1L_chr = "short_name_chr",
+                                                                                                                match_value_xx = .x,
+                                                                                                                target_var_nm_1L_chr = "long_name_chr") %>%
+                                                                                         Hmisc::capitalize())) %>%
+                                                                ready4::make_list_phrase())
+                                                     }
+                                                   }),
+                                                 T ~ Parameter ))
+  }
+  sds_ls <- mdl_smry_tb$Concept %>% strsplit("[.]") %>%
+    purrr::map(~
+                 if(length(.x)==2){
+                   c(.x[1],
+                     .x[2] %>% strsplit("[:]") %>% purrr::flatten_chr())
+                 }else{
+                   .x
+                 })
+  mdl_smry_tb$Concept <- sds_ls %>% purrr::map_chr(~{
+    vector_chr <- .x
+    ifelse(length(vector_chr)>1 & vector_chr[1] %in% c("sd","chol"), # was =3
+           paste0(ifelse(vector_chr[1]=="sd",
+                         "Standard Deviations",
+                         "Cholesky"),
+                  " - ", paste0(2:length(vector_chr) %>% # was 3
+                                  purrr::map_chr(~ifelse(vector_chr[.x] %in% (fctr_combined_ls %>% purrr::flatten_chr()),
+                                                         ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                                  match_value_xx = (fctr_separate_ls %>% purrr::flatten_chr())[which(vector_chr[.x] == (fctr_combined_ls %>% purrr::flatten_chr()))],
+                                                                                  match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                                  target_var_nm_1L_chr = "attribute_chr") %>%
+                                                           stringr::str_replace_all("_"," "),#names(fctr_separate_ls)[which(x[2]==(fctr_separate_ls %>% purrr::flatten_chr()))],
+                                                         vector_chr[.x]) %>%
+                                                   stringr::str_replace_all(records_ls$opt_out_var_nm_1L_chr, opt_out_nm_1L_chr)), collapse = " x ")),
+           paste0(.x))
+  }
+  )
+  sds_ls <- mdl_smry_tb$Parameter %>% strsplit("[.]") %>%
+    purrr::map(~
+                 if(length(.x)==2){
+                   c(.x[1],
+                     .x[2] %>% strsplit("[:]") %>% purrr::flatten_chr())
+                 }else{
+                   .x
+                 })
+  mdl_smry_tb$Parameter <- sds_ls %>% purrr::map_chr(~{
+    vector_chr <- .x
+    ifelse(length(vector_chr)>1 & vector_chr[1] %in% c("sd","chol"),# was 3
+           paste0(paste0(2:length(vector_chr) %>% # was 3
+                           purrr::map_chr(~ifelse(vector_chr[.x] %in% (fctr_combined_ls %>% purrr::flatten_chr()),
+                                                  ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                           match_value_xx = (fctr_separate_ls %>% purrr::flatten_chr())[which(vector_chr[.x] == (fctr_combined_ls %>% purrr::flatten_chr()))],
+                                                                           match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                           target_var_nm_1L_chr = "short_nms_chr") %>%
+                                                    stringr::str_replace_all("_"," "),#names(fctr_separate_ls)[which(x[2]==(fctr_separate_ls %>% purrr::flatten_chr()))],
+                                                  vector_chr[.x]) %>%
+                                            stringr::str_replace_all(records_ls$opt_out_var_nm_1L_chr, opt_out_nm_1L_chr)), collapse = " x ")),
+           paste0(.x))
+  }
+  )
+  mdl_smry_tb <- mdl_smry_tb %>%
+    dplyr::mutate(Estimate = dplyr::case_when(sds_ls %>% purrr::map_lgl(~length(.x)==3 & .x[1] %in% c("sd")) ~ Estimate %>% abs(),
+                                              T ~ Estimate))
+  if(class_lgl %>% any()){
+    mdl_smry_tb <- mdl_smry_tb %>%
+      dplyr::select(Class, dplyr::everything()) %>%
+      dplyr::mutate(Class = Class %>% stringr::str_replace_all("class.", "Class ") %>% stringr::str_sub(end=-2)) %>%
+      dplyr::mutate(Class = Class %>% purrr::map2_chr(Concept,
+                                                      ~ ifelse(.x=="" & startsWith(.y,"Class "),
+                                                               "Class",
+                                                               .x)))
+  }
+  if(!identical(digits_1L_int,integer(0)))
+    mdl_smry_tb <- mdl_smry_tb %>%
+    dplyr::mutate(dplyr::across(where(is.numeric), ~round(.x, digits = digits_1L_int)))
+  mdl_smry_tb <- mdl_smry_tb %>% dplyr::arrange(match(Concept,mdl_smry_tb$Concept %>% unique()))
+  return(mdl_smry_tb)
+}
 transform_to_excel_date_fmt <- function(date_chr,
                                         format_1L_chr = "ymd HMS",
                                         index_date_1L_chr = "1899-12-30"){

@@ -289,7 +289,7 @@ make_choice_atts <- function (choice_sets_ls, opt_out_var_nm_1L_chr = "opt_out")
 #' Make choice card html
 #' @description make_choice_card_html() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice card html. The function is called for its side effects and does not return a value.
 #' @param choice_card_tb Choice card (a tibble)
-#' @return card_kbl (An object)
+#' @return Card (a kable)
 #' @rdname make_choice_card_html
 #' @export 
 #' @importFrom tibble as_tibble
@@ -394,6 +394,37 @@ make_choice_cards_tb_ls <- function (blocks_int, choices_tb)
     block_choice_tbs_ls <- purrr::map(blocks_int, ~dplyr::filter(choices_tb, 
         startsWith(Choice, paste0("set", .x, "."))))
     return(block_choice_tbs_ls)
+}
+#' Make choice descriptives parameters
+#' @description make_choice_descvs_params() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice descriptives parameters. The function returns Choice descriptives parameters (a list).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param records_ls Records (a list)
+#' @param opt_out_nm_1L_chr Opt out name (a character vector of length one), Default: 'Opt out'
+#' @return Choice descriptives parameters (a list)
+#' @rdname make_choice_descvs_params
+#' @export 
+#' @importFrom purrr map2 flatten
+#' @importFrom stringr str_replace_all
+#' @keywords internal
+make_choice_descvs_params <- function (dce_design_ls, records_ls, opt_out_nm_1L_chr = "Opt out") 
+{
+    choice_descvs_params_ls <- purrr::map2(c(paste0(get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb) %>% 
+        stringr::str_replace_all("_", " "), " attribute"), {
+        if (dce_design_ls$choice_sets_ls$opt_out_1L_lgl) {
+            paste0(opt_out_nm_1L_chr, " alternative")
+        } else {
+            character(0)
+        }
+    }), c(get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb), 
+        {
+            if (dce_design_ls$choice_sets_ls$opt_out_1L_lgl) {
+                records_ls$opt_out_var_nm_1L_chr
+            } else {
+                character(0)
+            }
+        }), ~list(list(att_txt_chr = .x, att_var_nms_chr = .y))) %>% 
+        purrr::flatten()
+    return(choice_descvs_params_ls)
 }
 #' Make choice integer vector
 #' @description make_choice_int() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice integer vector. The function returns Choice (an integer vector).
@@ -892,6 +923,44 @@ make_cut_pnts_cmprsn <- function (ds_tb, grouping_var_nms_chr, expected_dbl = nu
         expected_dbl = expected_dbl, is_pc_1L_lgl = is_pc_1L_lgl)
     return(cmprsn_tb)
 }
+#' Make design matrix names
+#' @description make_dsn_mat_nms() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make design matrix names. The function returns Rename (a character vector).
+#' @param dce_design_ls Discrete choice experiment design (a list)
+#' @param grouping_1L_int Grouping (an integer vector of length one), Default: integer(0)
+#' @param idx_1L_int Index (an integer vector of length one), Default: 1
+#' @param opt_out_nm_1L_chr Opt out name (a character vector of length one), Default: 'Opt out'
+#' @return Rename (a character vector)
+#' @rdname make_dsn_mat_nms
+#' @export 
+#' @importFrom purrr map2_chr map_chr discard
+#' @importFrom ready4 get_from_lup_obj
+#' @keywords internal
+make_dsn_mat_nms <- function (dce_design_ls, grouping_1L_int = integer(0), idx_1L_int = 1L, 
+    opt_out_nm_1L_chr = "Opt out") 
+{
+    if (dce_design_ls$choice_sets_ls$opt_out_1L_lgl) {
+        opt_out_chr <- paste0(get_opt_out_var_nm(dce_design_ls$efnt_dsn_ls[[idx_1L_int]]$design, 
+            dce_design_ls$choice_sets_ls), " - ", opt_out_nm_1L_chr)
+    }
+    else {
+        opt_out_chr <- character(0)
+    }
+    rename_chr <- c(opt_out_chr, purrr::map2_chr(make_fctr_atts_tmp_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb), 
+        get_fctr_atts_dummy_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb, 
+            flatten_1L_lgl = T), ~paste0(.x, " - ", paste0(ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb, 
+            match_value_xx = .y, match_var_nm_1L_chr = "dummy_nm_chr", 
+            target_var_nm_1L_chr = "attribute_chr"), " (", ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb, 
+            match_value_xx = .y, match_var_nm_1L_chr = "dummy_nm_chr", 
+            target_var_nm_1L_chr = "short_nms_chr"), ")"))), 
+        make_cont_atts_rename_ls(dce_design_ls$choice_sets_ls$att_lvls_tb) %>% 
+            purrr::map_chr(~paste0(.x[2], " - ", .x[1])))
+    if (!identical(grouping_1L_int, integer(0))) {
+        rename_mat <- matrix(1:length(rename_chr), ncol = ceiling(length(rename_chr)/grouping_1L_int))
+        rename_chr <- 1:ncol(rename_mat) %>% purrr::map_chr(~paste0(rename_chr[rename_mat[, 
+            .x]] %>% purrr::discard(is.na), collapse = ", "))
+    }
+    return(rename_chr)
+}
 #' Make efficient design matrix
 #' @description make_efnt_dsn_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make efficient design matrix. The function returns Efficient design (a matrix).
 #' @param dce_design_ls Discrete choice experiment design (a list)
@@ -1044,6 +1113,47 @@ make_gmnl_mdl_smry <- function (gmnl_mdl)
         as.character())[2]
     return(gmnl_smry_ls)
 }
+#' Make individual model summary tibble
+#' @description make_indl_mdl_smry_tb() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make individual model summary tibble. The function returns Individual model summary (a tibble).
+#' @param mdls_ls Models (a list)
+#' @return Individual model summary (a tibble)
+#' @rdname make_indl_mdl_smry_tb
+#' @export 
+#' @importFrom purrr map2_dfr flatten_chr
+#' @importFrom janitor row_to_names
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr mutate arrange select
+#' @importFrom Hmisc capitalize
+#' @importFrom ready4 make_list_phrase
+#' @keywords internal
+make_indl_mdl_smry_tb <- function (mdls_ls) 
+{
+    indl_mdl_smry_tb <- purrr::map2_dfr(mdls_ls$mixl_mdl_ls, 
+        names(mdls_ls$mixl_mdl_ls), ~make_mdl_smry(.x, return_1L_chr = "performance") %>% 
+            t() %>% janitor::row_to_names(1) %>% tibble::as_tibble() %>% 
+            dplyr::mutate(Model = .y %>% strsplit("_") %>% purrr::flatten_chr() %>% 
+                Hmisc::capitalize() %>% ready4::make_list_phrase())) %>% 
+        dplyr::arrange(as.numeric(trimws(BIC)), Model) %>% dplyr::select(Model, 
+        BIC, AIC, logLik)
+    return(indl_mdl_smry_tb)
+}
+#' Make individual models knit parameters
+#' @description make_indl_mdls_knit_params() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make individual models knit parameters. The function returns Individual models knit parameters (a list).
+#' @param mdls_ls Models (a list)
+#' @return Individual models knit parameters (a list)
+#' @rdname make_indl_mdls_knit_params
+#' @export 
+#' @importFrom purrr map flatten_chr flatten
+#' @importFrom ready4 make_list_phrase
+#' @keywords internal
+make_indl_mdls_knit_params <- function (mdls_ls) 
+{
+    indl_mdls_knit_params_ls <- purrr::map(1:length(mdls_ls$mixl_mdl_ls), 
+        ~list(list(indices_int = .x, names_chr = names(mdls_ls$mixl_mdl_ls)[.x] %>% 
+            strsplit("_") %>% purrr::flatten_chr() %>% ready4::make_list_phrase()))) %>% 
+        purrr::flatten()
+    return(indl_mdls_knit_params_ls)
+}
 #' Make model parameters list
 #' @description make_mdl_params_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make model parameters list. The function returns Model parameters (a list).
 #' @param candidate_predrs_tb Candidate predictors (a tibble)
@@ -1138,7 +1248,7 @@ make_mdl_smry <- function (model_mdl, return_1L_chr = "coefficients")
 #' @rdname make_mxd_lgt_mdl_ls
 #' @export 
 #' @importFrom dplyr filter pull
-#' @importFrom purrr flatten_chr map flatten discard compact map2 map_chr
+#' @importFrom purrr flatten_chr map flatten discard compact map2 modify_at map_chr
 #' @importFrom stats setNames
 #' @importFrom utils combn
 #' @keywords internal
@@ -1149,10 +1259,10 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
     return_ls <- NULL
     signft_concepts_chr <- get_signft_concepts(att_predn_mdls_ls, 
         mdl_params_ls = mdl_params_ls, min_threshold_1L_int = min_threshold_1L_int, 
-        exclude_chr = exclude_chr)
+        exclude_chr = exclude_chr) %>% sort()
     if (length(signft_concepts_chr) > 0) {
         signft_concepts_tb <- make_signft_concepts_tbl(att_predn_mdls_ls, 
-            mdl_params_ls) %>% dplyr::filter(concept_chr %in% 
+            mdl_params_ls, collapse_1L_lgl = F) %>% dplyr::filter(concept_chr %in% 
             signft_concepts_chr)
         choice_atts_chr <- signft_concepts_tb$predicts_ls %>% 
             purrr::flatten_chr() %>% unique()
@@ -1175,12 +1285,13 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
                 ~{
                   slimmed_predrs_chr <- intersect(signft_concepts_tb %>% 
                     dplyr::pull(paste0(.x, "_predrs_chr")) %>% 
-                    purrr::discard(is.na), predictors_chr)
+                    purrr::discard(~identical(.x, list())) %>% 
+                    purrr::flatten_chr(), predictors_chr)
                   if (identical(slimmed_predrs_chr, character(0))) {
                     character(0)
                   }
                   else {
-                    predictors_chr
+                    slimmed_predrs_chr
                   }
                 }) %>% stats::setNames(atts_chr) %>% purrr::compact()
         })
@@ -1204,12 +1315,29 @@ make_mxd_lgt_mdl_ls <- function (att_predn_mdls_ls, dce_design_ls, mdl_params_ls
                 var_nms_chr %>% purrr::map(~var_predrs_chr) %>% 
                   stats::setNames(var_nms_chr)
             }) %>% purrr::flatten()
-            predn_mdl <- fit_choice_mdl(dce_design_ls, mdl_params_ls = mdl_params_ls, 
-                records_ls = records_ls, return_1L_chr = return_1L_chr, 
-                formula_env = formula_env, indl_predrs_chr = mvar_ls %>% 
-                  purrr::flatten_chr() %>% unique(), correlation_1L_lgl = T, 
-                mvar_ls = mvar_ls)
-            predn_mdl
+            mvar_ls <- mvar_ls %>% purrr::map2(names(mvar_ls), 
+                ~{
+                  subset_chr <- intersect(.x, att_predn_mdls_ls[[.y]]$significant_predrs_chr)
+                  if (identical(subset_chr, character(0))) {
+                    NULL
+                  }
+                  else {
+                    subset_chr
+                  }
+                }) %>% purrr::discard(is.null)
+            if (length(mvar_ls) > 0) {
+                predn_mdl <- fit_choice_mdl(dce_design_ls, mdl_params_ls = mdl_params_ls %>% 
+                  purrr::modify_at("random_params_chr", ~.x[names(.x) %in% 
+                    names(mvar_ls)]), records_ls = records_ls, 
+                  return_1L_chr = return_1L_chr, formula_env = formula_env, 
+                  indl_predrs_chr = mvar_ls %>% purrr::flatten_chr() %>% 
+                    unique(), correlation_1L_lgl = ifelse(length(mvar_ls) > 
+                    1, T, F), mvar_ls = mvar_ls)
+                predn_mdl
+            }
+            else {
+                NULL
+            }
         }) %>% stats::setNames(combns_ls %>% purrr::map_chr(~paste0(.x, 
             collapse = "_")))
     }
@@ -1320,6 +1448,27 @@ make_new_choice_ds <- function (choices_ls, dce_design_ls, mdl_params_ls, record
         new_choices_xx <- new_choices_tb
     }
     return(new_choices_xx)
+}
+#' Make number text
+#' @description make_number_text() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make number text. The function returns Text (a character vector of length one).
+#' @param number_1L_int Number (an integer vector of length one)
+#' @param capitalize_1L_lgl Capitalize (a logical vector of length one), Default: F
+#' @param threshold_1L_int Threshold (an integer vector of length one), Default: 10
+#' @return Text (a character vector of length one)
+#' @rdname make_number_text
+#' @export 
+#' @importFrom english as.english
+#' @importFrom stringr str_replace_all
+#' @importFrom Hmisc capitalize
+#' @keywords internal
+make_number_text <- function (number_1L_int, capitalize_1L_lgl = F, threshold_1L_int = 10L) 
+{
+    text_1L_chr <- ifelse(abs(number_1L_int) <= threshold_1L_int, 
+        number_1L_int %>% english::as.english() %>% stringr::str_replace_all("-", 
+            " "), as.character(number_1L_int))
+    text_1L_chr <- ifelse(capitalize_1L_lgl, Hmisc::capitalize(text_1L_chr), 
+        text_1L_chr)
+    return(text_1L_chr)
 }
 #' Make participants dataset
 #' @description make_participants_ds() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make participants dataset. The function returns Participants (a tibble).
@@ -1583,17 +1732,20 @@ make_seifa_lup <- function (url_1L_chr = character(0), fl_nm_1L_chr = character(
 #' @description make_signft_concepts_tbl() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make significant concepts table. The function returns Significant concepts (a tibble).
 #' @param att_predn_mdls_ls Attribute prediction models (a list)
 #' @param mdl_params_ls Model parameters (a list)
+#' @param collapse_1L_lgl Collapse (a logical vector of length one), Default: T
 #' @return Significant concepts (a tibble)
 #' @rdname make_signft_concepts_tbl
 #' @export 
-#' @importFrom purrr map discard map_dfr flatten_chr map2_dfr compact
+#' @importFrom purrr map discard map_dfr reduce flatten_chr map2_dfr compact
 #' @importFrom dplyr mutate case_when filter select distinct bind_cols summarise across everything arrange desc
 #' @importFrom tibble add_case as_tibble
+#' @importFrom rlang sym
 #' @importFrom stats setNames
 #' @importFrom ready4 get_from_lup_obj
 #' @importFrom stringi stri_list2matrix
+#' @importFrom tidyselect all_of
 #' @keywords internal
-make_signft_concepts_tbl <- function (att_predn_mdls_ls, mdl_params_ls) 
+make_signft_concepts_tbl <- function (att_predn_mdls_ls, mdl_params_ls, collapse_1L_lgl = T) 
 {
     signft_concepts_ls <- att_predn_mdls_ls %>% purrr::map(~.x$significant_predrs_chr) %>% 
         purrr::discard(~is.na(.x[1]))
@@ -1614,8 +1766,15 @@ make_signft_concepts_tbl <- function (att_predn_mdls_ls, mdl_params_ls)
     signft_concepts_tb <- signft_concepts_tb %>% dplyr::select(-type_chr) %>% 
         dplyr::mutate(predicts_ls = list(list()), total_int = NA_integer_, 
             predictors_ls = list(list()))
-    signft_concepts_tb[, paste0(atts_tb$attribute_chr %>% unique(), 
-        "_predrs_chr")] <- NA_character_
+    if (collapse_1L_lgl) {
+        signft_concepts_tb[, paste0(atts_tb$attribute_chr %>% 
+            unique(), "_predrs_chr")] <- NA_character_
+    }
+    else {
+        signft_concepts_tb <- purrr::reduce(paste0(atts_tb$attribute_chr %>% 
+            unique(), "_predrs_chr"), .init = signft_concepts_tb, 
+            ~.x %>% dplyr::mutate(`:=`(!!rlang::sym(.y), list(list()))))
+    }
     col_nms_chr <- colnames(signft_concepts_tb)
     grouped_concepts_ls <- signft_concepts_tb$concept_chr %>% 
         purrr::map(~dplyr::filter(mdl_params_ls$candidate_predrs_tb, 
@@ -1643,14 +1802,46 @@ make_signft_concepts_tbl <- function (att_predn_mdls_ls, mdl_params_ls)
                   predrs_ls %>% stringi::stri_list2matrix() %>% 
                     tibble::as_tibble(.name_repair = ~names(predrs_ls)) %>% 
                     dplyr::summarise(dplyr::across(dplyr::everything(), 
-                      ~paste0(sort(unique(.x)), collapse = " ")))) %>% 
-                  dplyr::select(col_nms_chr)
+                      ~{
+                        if (collapse_1L_lgl) {
+                          paste0(sort(unique(.x)), collapse = " ")
+                        }
+                        else {
+                          list(sort(unique(.x)))
+                        }
+                      }))) %>% dplyr::select(tidyselect::all_of(col_nms_chr))
             }
             slice_tb
         })
     signft_concepts_tb <- signft_concepts_tb %>% dplyr::arrange(dplyr::desc(total_int), 
         concept_chr)
     return(signft_concepts_tb)
+}
+#' Make summary grouping indices
+#' @description make_smry_grouping_idxs() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary grouping indices. The function returns Summary grouping indices (an integer vector).
+#' @param mdl_smry_tb Model summary (a tibble)
+#' @param records_ls Records (a list)
+#' @return Summary grouping indices (an integer vector)
+#' @rdname make_smry_grouping_idxs
+#' @export 
+#' @importFrom purrr map_int map_chr
+#' @importFrom dplyr filter
+#' @importFrom stats setNames
+#' @importFrom stringr str_replace_all
+#' @keywords internal
+make_smry_grouping_idxs <- function (mdl_smry_tb, records_ls) 
+{
+    smry_grouping_idxs_int <- mdl_smry_tb$Concept %>% unique() %>% 
+        purrr::map_int(~mdl_smry_tb %>% dplyr::filter(Concept == 
+            .x) %>% nrow()) %>% stats::setNames(mdl_smry_tb$Concept %>% 
+        unique() %>% purrr::map_chr(~{
+        filtered_df <- mdl_smry_tb %>% dplyr::filter(Concept == 
+            .x)
+        ifelse((filtered_df$Concept == filtered_df$Parameter) | 
+            .x == records_ls$opt_out_var_nm_1L_chr, " ", .x) %>% 
+            unique() %>% stringr::str_replace_all("_", " ")
+    }))
+    return(smry_grouping_idxs_int)
 }
 #' Make summary tibble
 #' @description make_smry_tb() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary tibble. The function returns Summary (a tibble).
@@ -1782,6 +1973,55 @@ make_sos_lup <- function (area_var_nm_1L_chr = "SOS_CODE_2016", fl_nm_1L_chr = "
             share_dbl = youth_popl_dbl/total_youth_popl_dbl) %>% 
         dplyr::select(der_urban_lgl, share_dbl)
     return(sos_lup)
+}
+#' Make transformed flags summary tibble
+#' @description make_tfd_flags_smry_tb() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make transformed flags summary tibble. The function returns Transformed flags summary (a tibble).
+#' @param preprocessing_log_ls Preprocessing log (a list)
+#' @param records_ls Records (a list)
+#' @param country_1L_chr Country (a character vector of length one)
+#' @param what_1L_chr What (a character vector of length one), Default: 'all'
+#' @return Transformed flags summary (a tibble)
+#' @rdname make_tfd_flags_smry_tb
+#' @export 
+#' @importFrom tibble rownames_to_column
+#' @importFrom dplyr rename filter mutate arrange case_when
+#' @importFrom stringr str_replace_all
+#' @importFrom english as.english
+#' @keywords internal
+make_tfd_flags_smry_tb <- function (preprocessing_log_ls, records_ls, country_1L_chr, what_1L_chr = "all") 
+{
+    tfd_flags_smry_tb <- preprocessing_log_ls$flags_smry_tb %>% 
+        t() %>% as.data.frame() %>% tibble::rownames_to_column("Outcome") %>% 
+        dplyr::rename(n = V1)
+    if (what_1L_chr == "red") {
+        tfd_flags_smry_tb <- tfd_flags_smry_tb %>% dplyr::filter(startsWith(Outcome, 
+            "red_flag")) %>% dplyr::rename(Type = Outcome) %>% 
+            dplyr::mutate(Type = Type %>% stringr::str_replace_all("red_flag_country_lgl", 
+                paste0("Response from outside ", country_1L_chr)) %>% 
+                stringr::str_replace_all("red_flag_reported_age_lgl", 
+                  "Inconsistency between age in years and date of birth") %>% 
+                stringr::str_replace_all("red_flag_email_lgl", 
+                  paste0("Email address with ", records_ls$flags_ls$email_max_cnstv_digits_1L_int %>% 
+                    english::as.english(), " or more consecutive numeric digits")) %>% 
+                stringr::str_replace_all("red_flag_duplicate_txt_var1_lgl", 
+                  "Free text response duplicates that of other participant") %>% 
+                stringr::str_replace_all("red_flag_qltv_ax_lgl", 
+                  "Qualitative assessment") %>% stringr::str_replace_all("red_flag_attempt_dur_lgl", 
+                paste0("Attempt duration of under ", records_ls$flags_ls$attempt_dur_min_1L_dbl/60 %>% 
+                  english::as.english(), " minutes")) %>% stringr::str_replace_all("red_flag_count_int", 
+                "Total")) %>% dplyr::arrange(Type)
+    }
+    if (what_1L_chr == "outcome") {
+        tfd_flags_smry_tb <- tfd_flags_smry_tb %>% dplyr::filter(!startsWith(Outcome, 
+            "red_flag")) %>% dplyr::filter(Outcome %in% c("qltv_force_in_lgl", 
+            "qltv_force_out_lgl", "exluded_by_alg_lgl")) %>% 
+            dplyr::mutate(Outcome = dplyr::case_when(Outcome == 
+                "exluded_by_alg_lgl" ~ "Automated red-flag and excluded", 
+                Outcome == "qltv_force_in_lgl" ~ "Automated red-flag and included", 
+                Outcome == "qltv_force_out_lgl" ~ "No automated red-flag and excluded", 
+                T ~ Outcome))
+    }
+    return(tfd_flags_smry_tb)
 }
 #' Make transformed levels list
 #' @description make_tfd_lvls_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make transformed levels list. The function returns Levels (a list).

@@ -32,3 +32,5 @@
 ^Meta$
 ^data-raw/fns/launch\.R$
 ^data-raw/fns/reorder\.R$
+^data-raw/fns/knit\.R$
+^data-raw/fns/print\.R$

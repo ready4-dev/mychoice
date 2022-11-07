@@ -67,3 +67,4 @@ readLines(".github/workflows/R-CMD-check.yaml") %>%
 #                          remote = "ready4-dev/specific")
 # devtools::build_vignettes()
 # Note, on initial setup ran commands from: https://usethis.r-lib.org/reference/use_pkgdown.html
+# May need to link to this help text for Mac users: https://stackoverflow.com/questions/70638118/configuring-compilers-on-mac-m1-big-sur-monterey-for-rcpp-and-other-tools

@@ -4,12 +4,14 @@
 \alias{make_signft_concepts_tbl}
 \title{Make significant concepts table}
 \usage{
-make_signft_concepts_tbl(att_predn_mdls_ls, mdl_params_ls)
+make_signft_concepts_tbl(att_predn_mdls_ls, mdl_params_ls, collapse_1L_lgl = T)
 }
 \arguments{
 \item{att_predn_mdls_ls}{Attribute prediction models (a list)}
 
 \item{mdl_params_ls}{Model parameters (a list)}
+
+\item{collapse_1L_lgl}{Collapse (a logical vector of length one), Default: T}
 }
 \value{
 Significant concepts (a tibble)

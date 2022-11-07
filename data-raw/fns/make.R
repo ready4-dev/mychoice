@@ -285,6 +285,32 @@ make_choice_cards_tb_ls <- function(blocks_int,
                                     ~ dplyr::filter(choices_tb, startsWith(Choice, paste0("set",.x,"."))))
   return(block_choice_tbs_ls)
 }
+make_choice_descvs_params <- function(dce_design_ls,
+                                      records_ls,
+                                      opt_out_nm_1L_chr = "Opt out"){
+  choice_descvs_params_ls <- purrr::map2(c(paste0(get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb) %>%
+                                                    stringr::str_replace_all("_"," ")," attribute"),
+                                           {
+                                             if(dce_design_ls$choice_sets_ls$opt_out_1L_lgl){
+                                               paste0(opt_out_nm_1L_chr, " alternative")
+                                             }else{
+                                               character(0)
+                                             }
+                                           }),
+                                         c(get_atts(dce_design_ls$choice_sets_ls$att_lvls_tb),
+                                           {
+                                             if(dce_design_ls$choice_sets_ls$opt_out_1L_lgl){
+                                               records_ls$opt_out_var_nm_1L_chr
+                                             }else{
+                                               character(0)
+                                             }
+                                           }),
+                                         ~ list(list(att_txt_chr = .x,
+                                                     att_var_nms_chr = .y ))) %>%
+    purrr::flatten()
+  return(choice_descvs_params_ls)
+}
+
 make_choice_int <- function(ds_tb,
                             choice_sets_ls,
                             choice_vars_pfx_1L_chr ="DCE_B"){
@@ -676,6 +702,39 @@ make_cut_pnts_cmprsn <- function(ds_tb,
                                is_pc_1L_lgl = is_pc_1L_lgl)
   return(cmprsn_tb)
 }
+make_dsn_mat_nms <- function(dce_design_ls,
+                             grouping_1L_int = integer(0),
+                             idx_1L_int = 1L,
+                             opt_out_nm_1L_chr = "Opt out"){
+  if(dce_design_ls$choice_sets_ls$opt_out_1L_lgl){
+    opt_out_chr <- paste0(get_opt_out_var_nm(dce_design_ls$efnt_dsn_ls[[idx_1L_int]]$design, dce_design_ls$choice_sets_ls)," - ",opt_out_nm_1L_chr)
+  }else{
+    opt_out_chr <- character(0)
+  }
+  rename_chr <- c(opt_out_chr,
+                  purrr::map2_chr(make_fctr_atts_tmp_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb),
+                                  get_fctr_atts_dummy_var_nms(dce_design_ls$choice_sets_ls$att_lvls_tb, flatten_1L_lgl = T),
+                                  ~ paste0(.x, " - ",
+                                           paste0(ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                           match_value_xx = .y,
+                                                                           match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                           target_var_nm_1L_chr = "attribute_chr"),
+                                                  " (",
+                                                  ready4::get_from_lup_obj(dce_design_ls$choice_sets_ls$att_lvls_tb,
+                                                                           match_value_xx = .y,
+                                                                           match_var_nm_1L_chr = "dummy_nm_chr",
+                                                                           target_var_nm_1L_chr = "short_nms_chr"),
+                                                  ")"))),
+                  make_cont_atts_rename_ls(dce_design_ls$choice_sets_ls$att_lvls_tb) %>%
+                    purrr::map_chr(~paste0(.x[2]," - ", .x[1])))
+  if(!identical(grouping_1L_int, integer(0))){
+    rename_mat <- matrix(1:length(rename_chr), ncol = ceiling(length(rename_chr)/grouping_1L_int))
+    rename_chr <- 1:ncol(rename_mat) %>% purrr::map_chr(~ paste0(rename_chr[rename_mat[,.x]] %>% purrr::discard(is.na),
+                                                                 collapse = ", "))
+  }
+  return(rename_chr)
+}
+
 make_efnt_dsn_mat <- function(dce_design_ls,
                               parallel_1L_lgl = FALSE,
                               pilot_analysis_ls = list(),
@@ -771,6 +830,29 @@ make_gmnl_mdl_smry <- function(gmnl_mdl){
   gmnl_smry_ls$call$formula <- (gmnl_smry_ls$call$formula %>% as.character())[2]
   return(gmnl_smry_ls)
 }
+make_indl_mdls_knit_params <- function(mdls_ls){
+  indl_mdls_knit_params_ls <- purrr::map(1:length(mdls_ls$mixl_mdl_ls),
+                                         ~ list(list(indices_int = .x,
+                                                     names_chr = names(mdls_ls$mixl_mdl_ls)[.x] %>%
+                                                       strsplit("_") %>% purrr::flatten_chr() %>%
+                                                       ready4::make_list_phrase()))) %>%
+    purrr::flatten()
+  return(indl_mdls_knit_params_ls)
+}
+make_indl_mdl_smry_tb <- function(mdls_ls){
+  indl_mdl_smry_tb <- purrr::map2_dfr(mdls_ls$mixl_mdl_ls,
+                                      names(mdls_ls$mixl_mdl_ls),
+                                      ~ make_mdl_smry(.x,
+                                                      return_1L_chr = "performance") %>% t() %>%
+                                        janitor::row_to_names(1) %>%
+                                        tibble::as_tibble() %>%
+                                        dplyr::mutate(Model = .y %>% strsplit("_") %>% purrr::flatten_chr() %>% Hmisc::capitalize() %>% ready4::make_list_phrase())
+  ) %>%
+    dplyr::arrange(as.numeric(trimws(BIC)), Model) %>%
+    dplyr::select(Model, BIC, AIC, logLik)
+  return(indl_mdl_smry_tb)
+}
+
 make_mdl_params_ls <- function(candidate_predrs_tb,
                                dce_design_ls,
                                records_ls,
@@ -805,9 +887,10 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
                                  return_1L_chr = "mixl"){
   return_ls <- NULL
   signft_concepts_chr <- get_signft_concepts(att_predn_mdls_ls, mdl_params_ls = mdl_params_ls,
-                                             min_threshold_1L_int = min_threshold_1L_int, exclude_chr = exclude_chr)
+                                             min_threshold_1L_int = min_threshold_1L_int, exclude_chr = exclude_chr) %>%
+    sort()
   if(length(signft_concepts_chr) > 0){
-    signft_concepts_tb <- make_signft_concepts_tbl(att_predn_mdls_ls, mdl_params_ls) %>%
+    signft_concepts_tb <- make_signft_concepts_tbl(att_predn_mdls_ls, mdl_params_ls, collapse_1L_lgl = F) %>%
       dplyr::filter(concept_chr %in% signft_concepts_chr)
     choice_atts_chr <- signft_concepts_tb$predicts_ls %>% purrr::flatten_chr() %>% unique()
     #candidate_predrs_chr <- signft_concepts_tb$predictors_ls %>% purrr::flatten_chr()
@@ -839,11 +922,12 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
                                                  ~ {
                                                    slimmed_predrs_chr <- intersect(signft_concepts_tb %>%
                                                                                      dplyr::pull(paste0(.x,"_predrs_chr")) %>%
-                                                                                     purrr::discard(is.na), predictors_chr)
+                                                                                     purrr::discard(~identical(.x,list())) %>%
+                                                                                     purrr::flatten_chr(), predictors_chr)
                                                    if(identical(slimmed_predrs_chr,character(0))){
                                                      character(0)
                                                    }else{
-                                                     predictors_chr
+                                                     slimmed_predrs_chr#predictors_chr
                                                    }
                                                  }) %>%
           stats::setNames(atts_chr) %>%
@@ -869,15 +953,30 @@ make_mxd_lgt_mdl_ls <-  function(att_predn_mdls_ls,
                                                    }
                                                    var_nms_chr %>% purrr::map(~var_predrs_chr) %>% stats::setNames(var_nms_chr)
                                                  }) %>% purrr::flatten()
-                                   predn_mdl <- fit_choice_mdl(dce_design_ls,
-                                                               mdl_params_ls = mdl_params_ls,
-                                                               records_ls = records_ls,
-                                                               return_1L_chr = return_1L_chr,
-                                                               formula_env = formula_env,
-                                                               indl_predrs_chr = mvar_ls %>% purrr::flatten_chr() %>% unique(),
-                                                               correlation_1L_lgl = T,
-                                                               mvar_ls = mvar_ls)
-                                   predn_mdl
+                                   mvar_ls <- mvar_ls %>% purrr::map2(names(mvar_ls),
+                                                                      ~ {
+                                                                        subset_chr <- intersect(.x,att_predn_mdls_ls[[.y]]$significant_predrs_chr)
+                                                                        if(identical(subset_chr,character(0))){
+                                                                          NULL
+                                                                        }else{
+                                                                          subset_chr
+                                                                        }
+                                                                      }) %>%
+                                     purrr::discard(is.null)
+                                   if(length(mvar_ls)>0){
+                                     predn_mdl <- fit_choice_mdl(dce_design_ls,
+                                                                 mdl_params_ls = mdl_params_ls %>%
+                                                                   purrr::modify_at("random_params_chr",~.x[names(.x) %in% names(mvar_ls)]),
+                                                                 records_ls = records_ls,
+                                                                 return_1L_chr = return_1L_chr,
+                                                                 formula_env = formula_env,
+                                                                 indl_predrs_chr = mvar_ls %>% purrr::flatten_chr() %>% unique(),
+                                                                 correlation_1L_lgl = ifelse(length(mvar_ls)>1,T,F),
+                                                                 mvar_ls = mvar_ls)
+                                     predn_mdl
+                                   }else{
+                                     NULL
+                                   }
                                  }) %>%
       stats::setNames(combns_ls %>% purrr::map_chr(~paste0(.x,collapse = "_")))
   }
@@ -995,6 +1094,18 @@ make_new_choice_ds <- function(choices_ls,
     new_choices_xx <- new_choices_tb
   }
   return(new_choices_xx)
+}
+make_number_text <- function(number_1L_int,
+                             capitalize_1L_lgl = F,
+                             threshold_1L_int =10L){
+  text_1L_chr <- ifelse(abs(number_1L_int)<= threshold_1L_int,
+                        number_1L_int %>% english::as.english() %>% stringr::str_replace_all("-"," "),
+                        as.character(number_1L_int))
+  text_1L_chr <- ifelse(capitalize_1L_lgl,
+                        Hmisc::capitalize(text_1L_chr),
+                        text_1L_chr)
+  return(text_1L_chr)
+
 }
 make_participants_ds <- function(ds_tb,
                                  candidate_predrs_chr,
@@ -1143,13 +1254,6 @@ make_records_ls <- function(ds_tb,
   records_ls$opt_out_var_nm_1L_chr <- opt_out_var_nm_1L_chr
   return(records_ls)
 }
-make_tfd_lvls_ls <- function(dce_design_ls){
-  lvls_ls <- get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)
-  lvls_ls[dce_design_ls$cost_att_idx_1L_int] <- list(lvls_ls[[dce_design_ls$cost_att_idx_1L_int]] %>%
-                                                       purrr::map_chr(~paste0(dce_design_ls$cost_pfx_1L_chr,.x,dce_design_ls$cost_sfx_1L_chr))) %>%
-    stats::setNames(get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)[dce_design_ls$cost_att_idx_1L_int] %>% names())
-  return(lvls_ls)
-}
 make_seifa_lup <- function(url_1L_chr = character(0),
                            fl_nm_1L_chr = character(0),
                            col_nms_chr = c("postcode_dbl","score_dbl","percentile_dbl"),
@@ -1193,7 +1297,8 @@ make_seifa_lup <- function(url_1L_chr = character(0),
   return(seifa_lup)
 }
 make_signft_concepts_tbl <- function(att_predn_mdls_ls,
-                                     mdl_params_ls){
+                                     mdl_params_ls,
+                                     collapse_1L_lgl = T){
   signft_concepts_ls <- att_predn_mdls_ls %>%
     purrr::map(~.x$significant_predrs_chr) %>%
     purrr::discard(~is.na(.x[1]))
@@ -1222,7 +1327,15 @@ make_signft_concepts_tbl <- function(att_predn_mdls_ls,
     dplyr::mutate(predicts_ls = list(list()),
                   total_int = NA_integer_,
                   predictors_ls = list(list()))
-  signft_concepts_tb[,paste0(atts_tb$attribute_chr %>% unique(),"_predrs_chr")] <- NA_character_
+  if(collapse_1L_lgl){
+    signft_concepts_tb[,paste0(atts_tb$attribute_chr %>% unique(),"_predrs_chr")] <- NA_character_
+  }else{
+    signft_concepts_tb <- purrr::reduce(paste0(atts_tb$attribute_chr %>% unique(),"_predrs_chr"),
+                                        .init = signft_concepts_tb,
+                                        ~ .x %>%
+                                          dplyr::mutate(!!rlang::sym(.y) := list(list())))
+  }
+
   col_nms_chr <- colnames(signft_concepts_tb)
   grouped_concepts_ls <- signft_concepts_tb$concept_chr %>%
     purrr::map(~dplyr::filter(mdl_params_ls$candidate_predrs_tb,concept_chr == .x)$short_name_chr) %>%
@@ -1252,14 +1365,41 @@ make_signft_concepts_tbl <- function(att_predn_mdls_ls,
                         names(predrs_ls) <- paste0(names(predrs_ls),"_predrs_chr")
                         slice_tb <- dplyr::bind_cols(slice_tb %>%
                                                        dplyr::select(-names(predrs_ls)),
-                                                     predrs_ls %>% stringi::stri_list2matrix() %>% tibble::as_tibble(.name_repair = ~ names(predrs_ls)) %>% dplyr::summarise(dplyr::across(dplyr::everything(),~paste0(sort(unique(.x)), collapse = " "))))  %>%
-                          dplyr::select(col_nms_chr)
+                                                     predrs_ls %>% stringi::stri_list2matrix() %>%
+                                                       tibble::as_tibble(.name_repair = ~ names(predrs_ls)) %>%
+                                                       dplyr::summarise(dplyr::across(dplyr::everything(),
+                                                                                      ~{
+                                                                                        if(collapse_1L_lgl){
+                                                                                          paste0(sort(unique(.x)), collapse = " ")
+                                                                                        }else{
+                                                                                          list(sort(unique(.x)))
+                                                                                        }
+
+                                                                                      }
+                                                       )))  %>%
+                          dplyr::select(tidyselect::all_of(col_nms_chr))
                       }
                       slice_tb
                     })
   signft_concepts_tb <- signft_concepts_tb %>%
     dplyr::arrange(dplyr::desc(total_int), concept_chr)
   return(signft_concepts_tb)
+}
+make_smry_grouping_idxs <- function(mdl_smry_tb,
+                                    records_ls){
+  smry_grouping_idxs_int <- mdl_smry_tb$Concept %>% unique() %>%
+    purrr::map_int(~mdl_smry_tb %>% dplyr::filter(Concept==.x) %>% nrow()) %>%
+    stats::setNames(mdl_smry_tb$Concept %>% unique() %>%
+                      purrr::map_chr(~{
+                        filtered_df <- mdl_smry_tb %>% dplyr::filter(Concept==.x)
+                        ifelse((filtered_df$Concept == filtered_df$Parameter) | .x == records_ls$opt_out_var_nm_1L_chr, #
+                               " ",
+                               .x) %>%
+                          unique() %>%
+                          stringr::str_replace_all("_"," ")
+                      }
+                      ))
+  return(smry_grouping_idxs_int)
 }
 make_smry_tb <- function(ds_tb,
                          var_metadata_tb,
@@ -1380,6 +1520,50 @@ make_sos_lup <- function(area_var_nm_1L_chr = "SOS_CODE_2016",
                   share_dbl = youth_popl_dbl/total_youth_popl_dbl) %>%
     dplyr::select(der_urban_lgl, share_dbl)
   return(sos_lup)
+}
+make_tfd_flags_smry_tb <- function(preprocessing_log_ls,
+                                   records_ls,
+                                   country_1L_chr,
+                                   what_1L_chr = "all"){
+  tfd_flags_smry_tb <- preprocessing_log_ls$flags_smry_tb %>% t() %>% as.data.frame() %>% tibble::rownames_to_column("Outcome") %>%
+    dplyr::rename(n = V1)
+  if(what_1L_chr == "red"){
+    tfd_flags_smry_tb <- tfd_flags_smry_tb %>%
+      dplyr::filter(startsWith(Outcome, "red_flag")) %>%
+      dplyr::rename(Type = Outcome) %>%
+      dplyr::mutate(Type = Type %>%
+                      stringr::str_replace_all("red_flag_country_lgl",
+                                               paste0("Response from outside ",country_1L_chr)) %>%
+                      stringr::str_replace_all("red_flag_reported_age_lgl", "Inconsistency between age in years and date of birth") %>%
+                      stringr::str_replace_all("red_flag_email_lgl", paste0("Email address with ",
+                                                                            records_ls$flags_ls$email_max_cnstv_digits_1L_int %>% english::as.english(),
+                                                                            " or more consecutive numeric digits")) %>%
+                      stringr::str_replace_all("red_flag_duplicate_txt_var1_lgl", "Free text response duplicates that of other participant") %>%
+                      stringr::str_replace_all("red_flag_qltv_ax_lgl", "Qualitative assessment") %>%
+                      stringr::str_replace_all("red_flag_attempt_dur_lgl",
+                                               paste0("Attempt duration of under ",
+                                                      records_ls$flags_ls$attempt_dur_min_1L_dbl/60  %>% english::as.english(),
+                                                      " minutes")) %>%
+                      stringr::str_replace_all("red_flag_count_int", "Total")
+      ) %>%
+      dplyr::arrange(Type)
+  }
+  if(what_1L_chr == "outcome"){
+    tfd_flags_smry_tb <- tfd_flags_smry_tb %>% dplyr::filter(!startsWith(Outcome, "red_flag")) %>%
+      dplyr::filter(Outcome %in% c("qltv_force_in_lgl","qltv_force_out_lgl","exluded_by_alg_lgl")) %>%
+      dplyr::mutate(Outcome = dplyr::case_when(Outcome == "exluded_by_alg_lgl" ~ "Automated red-flag and excluded",
+                                               Outcome == "qltv_force_in_lgl" ~ "Automated red-flag and included",
+                                               Outcome == "qltv_force_out_lgl" ~ "No automated red-flag and excluded",
+                                               T ~ Outcome))
+  }
+  return(tfd_flags_smry_tb)
+}
+make_tfd_lvls_ls <- function(dce_design_ls){
+  lvls_ls <- get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)
+  lvls_ls[dce_design_ls$cost_att_idx_1L_int] <- list(lvls_ls[[dce_design_ls$cost_att_idx_1L_int]] %>%
+                                                       purrr::map_chr(~paste0(dce_design_ls$cost_pfx_1L_chr,.x,dce_design_ls$cost_sfx_1L_chr))) %>%
+    stats::setNames(get_lvls(dce_design_ls$choice_sets_ls$att_lvls_tb)[dce_design_ls$cost_att_idx_1L_int] %>% names())
+  return(lvls_ls)
 }
 make_wtp_mat <- function(mnl_mdl,
                          cost_var_nm_1L_chr = "Cost",
