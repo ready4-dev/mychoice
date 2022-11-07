@@ -106,6 +106,12 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/knit_choice_descvs_rprt.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/knit_indl_mdls_rprt.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/launch_survey_preview.html</loc>
   </url>
   <url>
@@ -142,6 +148,9 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_cards_tb_ls.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_descvs_params.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_choice_int.html</loc>
   </url>
   <url>
@@ -175,6 +184,9 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/make_cut_pnts_cmprsn.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_dsn_mat_nms.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_efnt_dsn_mat.html</loc>
   </url>
   <url>
@@ -193,6 +205,12 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/make_gmnl_mdl_smry.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_indl_mdl_smry_tb.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_indl_mdls_knit_params.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_mdl_params_ls.html</loc>
   </url>
   <url>
@@ -206,6 +224,9 @@
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_new_choice_ds.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_number_text.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_participants_ds.html</loc>
@@ -229,10 +250,16 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/make_signft_concepts_tbl.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_smry_grouping_idxs.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_smry_tb.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_sos_lup.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/make_tfd_flags_smry_tb.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/make_tfd_lvls_ls.html</loc>
@@ -250,6 +277,15 @@
     <loc>https://ready4-dev.github.io/mychoice/reference/predict_mkt_share.html</loc>
   </url>
   <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/print_cmprsn_kbl.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/print_mdl_smry_kbl.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/print_tfd_mdl_smry.html</loc>
+  </url>
+  <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/remove_no_choice_responses.html</loc>
   </url>
   <url>
@@ -257,6 +293,12 @@
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/reorder_design_mat.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/transform_descvs_tb.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/mychoice/reference/transform_mdl_smry.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/mychoice/reference/transform_repln_ds_for_analysis.html</loc>
