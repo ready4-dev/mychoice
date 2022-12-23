@@ -241,7 +241,7 @@ make_case_choices_ds <- function (case_choices_mat, choice_sets_ls, new_opt_out_
 #' Make case choices matrix
 #' @description make_case_choices_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make case choices matrix. The function returns Case choices (a matrix).
 #' @param ds_tb Dataset (a tibble)
-#' @param block_idxs_ls Block indices (a list)
+#' @param block_indcs_ls Block indices (a list)
 #' @param choice_sets_ls Choice sets (a list)
 #' @param design_mat Design (a matrix)
 #' @param choice_vars_pfx_1L_chr Choice variables prefix (a character vector of length one), Default: 'DCE_B'
@@ -250,7 +250,8 @@ make_case_choices_ds <- function (case_choices_mat, choice_sets_ls, new_opt_out_
 #' @export 
 #' @importFrom purrr map reduce
 #' @importFrom dplyr slice
-make_case_choices_mat <- function (ds_tb, block_idxs_ls, choice_sets_ls, design_mat, choice_vars_pfx_1L_chr = "DCE_B") 
+make_case_choices_mat <- function (ds_tb, block_indcs_ls, choice_sets_ls, design_mat, 
+    choice_vars_pfx_1L_chr = "DCE_B") 
 {
     choice_responses_tb <- make_choice_responses_ds(ds_tb, choice_vars_pfx_1L_chr = choice_vars_pfx_1L_chr)
     nbr_of_choices_1L_int <- get_nbr_of_choices(choice_sets_ls)
@@ -264,7 +265,7 @@ make_case_choices_mat <- function (ds_tb, block_idxs_ls, choice_sets_ls, design_
             1):((block_ref_1L_int) * nbr_of_choice_alts_1L_int)
     })
     reordered_mat <- reorder_design_mat(design_mat = design_mat, 
-        block_idxs_ls = block_idxs_ls, choice_sets_ls = choice_sets_ls)
+        block_indcs_ls = block_indcs_ls, choice_sets_ls = choice_sets_ls)
     case_choices_mat <- purrr::map(all_choices_indcs_ls, ~reordered_mat[.x, 
         ]) %>% purrr::reduce(~rbind(.x, .y))
     return(case_choices_mat)
@@ -317,7 +318,7 @@ make_choice_card_html <- function (choice_card_tb)
 #' Make choice cards
 #' @description make_choice_cards() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice cards. The function returns Choice cards (a list).
 #' @param dce_design_ls Discrete choice experiment design (a list)
-#' @param block_idxs_ls Block indices (a list), Default: list()
+#' @param block_indcs_ls Block indices (a list), Default: list()
 #' @param seed_1L_int Seed (an integer vector of length one), Default: 1987
 #' @param set_idx_1L_int Set index (an integer vector of length one), Default: integer(0)
 #' @param transform_att_nms_1L_lgl Transform attribute names (a logical vector of length one), Default: T
@@ -330,7 +331,7 @@ make_choice_card_html <- function (choice_card_tb)
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr filter
 #' @keywords internal
-make_choice_cards <- function (dce_design_ls, block_idxs_ls = list(), seed_1L_int = 1987, 
+make_choice_cards <- function (dce_design_ls, block_indcs_ls = list(), seed_1L_int = 1987, 
     set_idx_1L_int = integer(0), transform_att_nms_1L_lgl = T) 
 {
     set.seed(seed_1L_int)
@@ -364,17 +365,17 @@ make_choice_cards <- function (dce_design_ls, block_idxs_ls = list(), seed_1L_in
     colnames(choices_tb) <- c("Choice", attributes_chr)
     choices_tb <- choices_tb %>% dplyr::filter(!startsWith(Choice, 
         "no"))
-    if (identical(block_idxs_ls, list())) {
+    if (identical(block_indcs_ls, list())) {
         indices_int <- 1:dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int
         folds_int <- cut(indices_int, breaks = dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int, 
             labels = FALSE) %>% sample()
-        block_idxs_ls <- 1:dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int %>% 
+        block_indcs_ls <- 1:dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int %>% 
             purrr::map(~indices_int[folds_int == .x])
     }
-    choice_cards_tb_ls <- purrr::map(block_idxs_ls, ~make_choice_cards_tb_ls(.x, 
+    choice_cards_tb_ls <- purrr::map(block_indcs_ls, ~make_choice_cards_tb_ls(.x, 
         choices_tb))
     choice_cards_html_ls <- purrr::map(choice_cards_tb_ls, ~make_cards_html_ls(.x))
-    choice_cards_ls <- list(survey_ls = survey_ls, block_idxs_ls = block_idxs_ls, 
+    choice_cards_ls <- list(survey_ls = survey_ls, block_indcs_ls = block_indcs_ls, 
         choices_tb = choices_tb, choice_cards_tb_ls = choice_cards_tb_ls, 
         choice_cards_html_ls = choice_cards_html_ls)
     return(choice_cards_ls)
@@ -741,7 +742,7 @@ make_choices_ls <- function (dce_design_ls, block_idx_1L_int = 1L, by_altv_1L_lg
         else {
             set_idx_1L_int
         }
-    }]]$block_idxs_ls[[block_idx_1L_int]][card_idx_1L_int] - 
+    }]]$block_indcs_ls[[block_idx_1L_int]][card_idx_1L_int] - 
         1) * alternatives_1L_int + 1
     choice_mat <- dce_design_ls$efnt_dsn_ls[[{
         if (identical(set_idx_1L_int, integer(0))) {
@@ -1516,14 +1517,14 @@ make_pilot_analysis_ls <- function (pilot_ds_tb, dce_design_ls, constraints_ls =
 {
     set.seed(seed_1L_int)
     pilot_ds_tb <- pilot_ds_tb %>% make_choice_responses_ds(choice_vars_pfx_1L_chr = choice_var_pfx_1L_chr)
-    case_choices_mat <- make_case_choices_mat(pilot_ds_tb, block_idxs_ls = dce_design_ls$choice_cards_ls[[{
+    case_choices_mat <- make_case_choices_mat(pilot_ds_tb, block_indcs_ls = dce_design_ls$choice_cards_ls[[{
         if (identical(set_idx_1L_int, integer(0))) {
             length(dce_design_ls$choice_cards_ls)
         }
         else {
             set_idx_1L_int
         }
-    }]]$block_idxs_ls, choice_sets_ls = dce_design_ls$choice_sets_ls, 
+    }]]$block_indcs_ls, choice_sets_ls = dce_design_ls$choice_sets_ls, 
         design_mat = dce_design_ls$efnt_dsn_ls[[{
             if (identical(set_idx_1L_int, integer(0))) {
                 length(dce_design_ls$efnt_dsn_ls)
@@ -1818,20 +1819,20 @@ make_signft_concepts_tbl <- function (att_predn_mdls_ls, mdl_params_ls, collapse
     return(signft_concepts_tb)
 }
 #' Make summary grouping indices
-#' @description make_smry_grouping_idxs() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary grouping indices. The function returns Summary grouping indices (an integer vector).
+#' @description make_smry_grouping_indcs() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary grouping indices. The function returns Summary grouping indices (an integer vector).
 #' @param mdl_smry_tb Model summary (a tibble)
 #' @param records_ls Records (a list)
 #' @return Summary grouping indices (an integer vector)
-#' @rdname make_smry_grouping_idxs
+#' @rdname make_smry_grouping_indcs
 #' @export 
 #' @importFrom purrr map_int map_chr
 #' @importFrom dplyr filter
 #' @importFrom stats setNames
 #' @importFrom stringr str_replace_all
 #' @keywords internal
-make_smry_grouping_idxs <- function (mdl_smry_tb, records_ls) 
+make_smry_grouping_indcs <- function (mdl_smry_tb, records_ls) 
 {
-    smry_grouping_idxs_int <- mdl_smry_tb$Concept %>% unique() %>% 
+    smry_grouping_indcs_int <- mdl_smry_tb$Concept %>% unique() %>% 
         purrr::map_int(~mdl_smry_tb %>% dplyr::filter(Concept == 
             .x) %>% nrow()) %>% stats::setNames(mdl_smry_tb$Concept %>% 
         unique() %>% purrr::map_chr(~{
@@ -1841,7 +1842,7 @@ make_smry_grouping_idxs <- function (mdl_smry_tb, records_ls)
             .x == records_ls$opt_out_var_nm_1L_chr, " ", .x) %>% 
             unique() %>% stringr::str_replace_all("_", " ")
     }))
-    return(smry_grouping_idxs_int)
+    return(smry_grouping_indcs_int)
 }
 #' Make summary tibble
 #' @description make_smry_tb() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary tibble. The function returns Summary (a tibble).

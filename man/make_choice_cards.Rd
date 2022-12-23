@@ -6,7 +6,7 @@
 \usage{
 make_choice_cards(
   dce_design_ls,
-  block_idxs_ls = list(),
+  block_indcs_ls = list(),
   seed_1L_int = 1987,
   set_idx_1L_int = integer(0),
   transform_att_nms_1L_lgl = T
@@ -15,7 +15,7 @@ make_choice_cards(
 \arguments{
 \item{dce_design_ls}{Discrete choice experiment design (a list)}
 
-\item{block_idxs_ls}{Block indices (a list), Default: list()}
+\item{block_indcs_ls}{Block indices (a list), Default: list()}
 
 \item{seed_1L_int}{Seed (an integer vector of length one), Default: 1987}
 

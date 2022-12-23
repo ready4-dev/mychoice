@@ -1,6 +1,6 @@
 # mychoice
 
-## Model Youth Choice Behaviours
+## Model Youth Choice Behaviours with Ready4
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -9,13 +9,13 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7213799.svg)](https://doi.org/10.5281/zenodo.7213799)
 <!-- badges: end -->
 
-Tools for modelling the choice behaviours of young people
-relating to their mental health. Supports standardised workflows for
-the design and analysis of Discrete Choice Experiments.  This
-development version of the youthu package has been made available as
-part of the process of testing and documenting the package. If you
-have any questions, please contact the authors
-(matthew.hamilton@orygen.org.au).
+Tools for modelling the choice behaviours with the ready4
+youth mental health systems model (https://www.ready4-dev.com/).
+Supports standardised workflows for the design and analysis of
+Discrete Choice Experiments.  This development version of the youthu
+package has been made available as part of the process of testing and
+documenting the package. If you have any questions, please contact the
+authors (matthew.hamilton@orygen.org.au).
 
 To install a development version of this software, run the following commands in your R console:
 

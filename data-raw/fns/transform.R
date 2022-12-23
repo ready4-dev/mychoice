@@ -323,7 +323,7 @@ transform_repln_ds_for_analysis <- function(repln_ds_tb,
     add_sias_totals(itm_prefix_1L_chr = "Ent_DCE_SIAS",
                     drvd_var_prefix_1L_chr = "der",
                     sias_ctg_sfx_1L_chr = "SIAS_ctg",
-                    sias_ttl_sfx_1L_chr = "SIAS_ttl") %>%
+                    sias_tot_sfx_1L_chr = "SIAS_tot") %>%
     dplyr::mutate(der_SIAS_nr = purrr::map_lgl(der_SIAS_ctg,
                                                ~ ifelse(.x=="Normal_Range",
                                                         T,
@@ -373,7 +373,7 @@ transform_repln_ds_for_analysis <- function(repln_ds_tb,
       length(dce_design_ls$choice_cards_ls)
     }else{
       set_idx_1L_int
-    }}]]$block_idxs_ls[[1]])) %>%
+    }}]]$block_indcs_ls[[1]])) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(der_All_Tasks = der_Missing_Tasks == 0)
   tfd_repln_ds_tb <- tfd_repln_ds_tb %>%

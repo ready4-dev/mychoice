@@ -4,12 +4,12 @@
 \alias{reorder_design_mat}
 \title{Reorder design matrix}
 \usage{
-reorder_design_mat(design_mat, block_idxs_ls, choice_sets_ls)
+reorder_design_mat(design_mat, block_indcs_ls, choice_sets_ls)
 }
 \arguments{
 \item{design_mat}{Design (a matrix)}
 
-\item{block_idxs_ls}{Block indices (a list)}
+\item{block_indcs_ls}{Block indices (a list)}
 
 \item{choice_sets_ls}{Choice sets (a list)}
 }

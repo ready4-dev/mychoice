@@ -68,8 +68,8 @@ add_age_and_area_cmprsns <- function(prpn_cmprsns_ls = list(),
   if(!is.null(area_group_var_nms_chr)){
     grouped_area_tb <- population_tb %>% dplyr::group_by(!!rlang::sym(area_group_var_nms_chr[2])) %>%
       dplyr::summarise(youth_popl_int = sum(!!rlang::sym(target_var_nm_1L_chr))) %>%
-      dplyr::mutate(national_ttl_int = max(youth_popl_int)) %>%
-      dplyr::mutate(!!rlang::sym(popl_var_nm_1L_chr) := youth_popl_int / national_ttl_int * scaling_1L_dbl)
+      dplyr::mutate(national_tot_int = max(youth_popl_int)) %>%
+      dplyr::mutate(!!rlang::sym(popl_var_nm_1L_chr) := youth_popl_int / national_tot_int * scaling_1L_dbl)
     if(!is.null(recode_ls)){
       grouped_area_tb <- grouped_area_tb  %>%
         dplyr::filter(!!rlang::sym(area_group_var_nms_chr[2])  != recode_ls$macro_nm_1L_chr)
@@ -95,8 +95,8 @@ add_age_and_area_cmprsns <- function(prpn_cmprsns_ls = list(),
                                                            target_var_nm_1L_chr = "Value_xx")) %>%
                       unlist()) %>%
       dplyr::group_by(!!rlang::sym(age_group_var_nms_chr[2])) %>% dplyr::summarise(youth_popl_int = sum(!!rlang::sym(target_var_nm_1L_chr))) %>%
-      dplyr::mutate(national_ttl_int = sum(youth_popl_int)) %>%
-      dplyr::mutate(!!rlang::sym(popl_var_nm_1L_chr) := youth_popl_int / national_ttl_int * scaling_1L_dbl)
+      dplyr::mutate(national_tot_int = sum(youth_popl_int)) %>%
+      dplyr::mutate(!!rlang::sym(popl_var_nm_1L_chr) := youth_popl_int / national_tot_int * scaling_1L_dbl)
     age_cmprsn_tb <- make_cmprsn_tbl(ds_tb %>%
                                        dplyr::mutate(!!rlang::sym(age_group_var_nms_chr[1]) := !!rlang::sym(age_group_var_nms_chr[1]) %>%
                                                        purrr::map(~ready4::get_from_lup_obj(age_group_lup,
@@ -399,7 +399,7 @@ add_design_spec <- function(dce_design_ls = list(),
                             alternatives_chr = character(0),
                             att_lvls_tb = tibble::tibble(),
                             #block_idcs_1L_int = integer(0),
-                            block_idxs_ls = list(),
+                            block_indcs_ls = list(),
                             choice_var_pfx_1L_chr = "DCE_B",
                             constraints_ls = list(),
                             cost_att_idx_1L_int = integer(0),
@@ -526,7 +526,7 @@ add_design_spec <- function(dce_design_ls = list(),
   if(add_choice_cards_1L_lgl){
     dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls,
                                             list(make_choice_cards(dce_design_ls,
-                                                                   block_idxs_ls = block_idxs_ls,
+                                                                   block_indcs_ls = block_indcs_ls,
                                                                    seed_1L_int = seed_1L_int,
                                                                    set_idx_1L_int = {
                                                                      if(!identical(set_idx_1L_int, integer(0))){
@@ -791,7 +791,7 @@ add_sias_totals <- function(data_tb,
                             itm_prefix_1L_chr,
                             drvd_var_prefix_1L_chr,
                             sias_ctg_sfx_1L_chr = "SIAS_ctg",
-                            sias_ttl_sfx_1L_chr = "SIAS_ttl"){
+                            sias_tot_sfx_1L_chr = "SIAS_tot"){
   der_suffix <- paste0("_",drvd_var_prefix_1L_chr)
   new_sias_prefix <- paste0(drvd_var_prefix_1L_chr,"_",itm_prefix_1L_chr)
   data_tb <-  data_tb %>%
@@ -805,9 +805,9 @@ add_sias_totals <- function(data_tb,
                                                                             gsub(der_suffix, "", .),
                                                                             sep = "_")))
   data_tb <- data_tb %>%
-    dplyr::mutate(!!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_ttl_sfx_1L_chr)) := rowSums(data_tb %>%
+    dplyr::mutate(!!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_tot_sfx_1L_chr)) := rowSums(data_tb %>%
                                                                                                     dplyr::select(dplyr::starts_with(new_sias_prefix)))) %>%
-    dplyr::mutate(!!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_ctg_sfx_1L_chr)) := !!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_ttl_sfx_1L_chr)) %>%
+    dplyr::mutate(!!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_ctg_sfx_1L_chr)) := !!rlang::sym(paste0(drvd_var_prefix_1L_chr,"_",sias_tot_sfx_1L_chr)) %>%
                     purrr::map_chr(~ ifelse(.x <34,
                                             "Normal_Range",
                                             ifelse(.x < 43,"Social_Phobia",  "Social_Anxiety"))) %>%

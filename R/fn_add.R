@@ -80,9 +80,9 @@ add_age_and_area_cmprsns <- function (prpn_cmprsns_ls = list(), ds_tb, age_group
     if (!is.null(area_group_var_nms_chr)) {
         grouped_area_tb <- population_tb %>% dplyr::group_by(!!rlang::sym(area_group_var_nms_chr[2])) %>% 
             dplyr::summarise(youth_popl_int = sum(!!rlang::sym(target_var_nm_1L_chr))) %>% 
-            dplyr::mutate(national_ttl_int = max(youth_popl_int)) %>% 
+            dplyr::mutate(national_tot_int = max(youth_popl_int)) %>% 
             dplyr::mutate(`:=`(!!rlang::sym(popl_var_nm_1L_chr), 
-                youth_popl_int/national_ttl_int * scaling_1L_dbl))
+                youth_popl_int/national_tot_int * scaling_1L_dbl))
         if (!is.null(recode_ls)) {
             grouped_area_tb <- grouped_area_tb %>% dplyr::filter(!!rlang::sym(area_group_var_nms_chr[2]) != 
                 recode_ls$macro_nm_1L_chr)
@@ -106,9 +106,9 @@ add_age_and_area_cmprsns <- function (prpn_cmprsns_ls = list(), ds_tb, age_group
                 target_var_nm_1L_chr = "Value_xx")) %>% unlist())) %>% 
             dplyr::group_by(!!rlang::sym(age_group_var_nms_chr[2])) %>% 
             dplyr::summarise(youth_popl_int = sum(!!rlang::sym(target_var_nm_1L_chr))) %>% 
-            dplyr::mutate(national_ttl_int = sum(youth_popl_int)) %>% 
+            dplyr::mutate(national_tot_int = sum(youth_popl_int)) %>% 
             dplyr::mutate(`:=`(!!rlang::sym(popl_var_nm_1L_chr), 
-                youth_popl_int/national_ttl_int * scaling_1L_dbl))
+                youth_popl_int/national_tot_int * scaling_1L_dbl))
         age_cmprsn_tb <- make_cmprsn_tbl(ds_tb %>% dplyr::mutate(`:=`(!!rlang::sym(age_group_var_nms_chr[1]), 
             !!rlang::sym(age_group_var_nms_chr[1]) %>% purrr::map(~ready4::get_from_lup_obj(age_group_lup, 
                 match_value_xx = .x, match_var_nm_1L_chr = "Var_2_xx", 
@@ -460,7 +460,7 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' @param add_cndt_design_mat Add candidate design (a matrix), Default: F
 #' @param alternatives_chr Alternatives (a character vector), Default: character(0)
 #' @param att_lvls_tb Attribute levels (a tibble), Default: tibble::tibble()
-#' @param block_idxs_ls Block indices (a list), Default: list()
+#' @param block_indcs_ls Block indices (a list), Default: list()
 #' @param choice_var_pfx_1L_chr Choice variable prefix (a character vector of length one), Default: 'DCE_B'
 #' @param constraints_ls Constraints (a list), Default: list()
 #' @param cost_att_idx_1L_int Cost attribute index (an integer vector of length one), Default: integer(0)
@@ -488,10 +488,10 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
 #' @keywords internal
 add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F, 
     add_cndt_design_mat = F, alternatives_chr = character(0), 
-    att_lvls_tb = tibble::tibble(), block_idxs_ls = list(), choice_var_pfx_1L_chr = "DCE_B", 
-    constraints_ls = list(), cost_att_idx_1L_int = integer(0), 
-    cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", draws_1L_int = 10L, 
-    nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
+    att_lvls_tb = tibble::tibble(), block_indcs_ls = list(), 
+    choice_var_pfx_1L_chr = "DCE_B", constraints_ls = list(), 
+    cost_att_idx_1L_int = integer(0), cost_pfx_1L_chr = "", cost_sfx_1L_chr = "", 
+    draws_1L_int = 10L, nbr_of_blocks_1L_int = integer(0), nbr_of_sets_1L_int = integer(0), 
     opt_out_idx_1L_int = integer(0), parallel_1L_lgl = FALSE, 
     pilot_ds_tb = NULL, priors_dbl = numeric(0), priors_idx_1L_int = integer(0), 
     seed_1L_int = 1987, session_ls = list(), set_idx_1L_int = integer(0), 
@@ -603,7 +603,7 @@ add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F
     }
     if (add_choice_cards_1L_lgl) {
         dce_design_ls$choice_cards_ls <- append(dce_design_ls$choice_cards_ls, 
-            list(make_choice_cards(dce_design_ls, block_idxs_ls = block_idxs_ls, 
+            list(make_choice_cards(dce_design_ls, block_indcs_ls = block_indcs_ls, 
                 seed_1L_int = seed_1L_int, set_idx_1L_int = {
                   if (!identical(set_idx_1L_int, integer(0))) {
                     set_idx_1L_int
@@ -957,7 +957,7 @@ add_reported_age_red_flag <- function (data_tb, date_stamp_var_nm_1L_chr, dob_va
 #' @param itm_prefix_1L_chr Item prefix (a character vector of length one)
 #' @param drvd_var_prefix_1L_chr Derived variable prefix (a character vector of length one)
 #' @param sias_ctg_sfx_1L_chr Social Interaction Anxiety Scale category suffix (a character vector of length one), Default: 'SIAS_ctg'
-#' @param sias_ttl_sfx_1L_chr Social Interaction Anxiety Scale total suffix (a character vector of length one), Default: 'SIAS_ttl'
+#' @param sias_tot_sfx_1L_chr Social Interaction Anxiety Scale total suffix (a character vector of length one), Default: 'SIAS_tot'
 #' @return Data (a tibble)
 #' @rdname add_sias_totals
 #' @export 
@@ -966,7 +966,7 @@ add_reported_age_red_flag <- function (data_tb, date_stamp_var_nm_1L_chr, dob_va
 #' @importFrom rlang sym
 #' @keywords internal
 add_sias_totals <- function (data_tb, itm_prefix_1L_chr, drvd_var_prefix_1L_chr, 
-    sias_ctg_sfx_1L_chr = "SIAS_ctg", sias_ttl_sfx_1L_chr = "SIAS_ttl") 
+    sias_ctg_sfx_1L_chr = "SIAS_ctg", sias_tot_sfx_1L_chr = "SIAS_tot") 
 {
     der_suffix <- paste0("_", drvd_var_prefix_1L_chr)
     new_sias_prefix <- paste0(drvd_var_prefix_1L_chr, "_", itm_prefix_1L_chr)
@@ -978,10 +978,10 @@ add_sias_totals <- function (data_tb, itm_prefix_1L_chr, drvd_var_prefix_1L_chr,
         list(~paste(drvd_var_prefix_1L_chr, gsub(der_suffix, 
             "", .), sep = "_")))
     data_tb <- data_tb %>% dplyr::mutate(`:=`(!!rlang::sym(paste0(drvd_var_prefix_1L_chr, 
-        "_", sias_ttl_sfx_1L_chr)), rowSums(data_tb %>% dplyr::select(dplyr::starts_with(new_sias_prefix))))) %>% 
+        "_", sias_tot_sfx_1L_chr)), rowSums(data_tb %>% dplyr::select(dplyr::starts_with(new_sias_prefix))))) %>% 
         dplyr::mutate(`:=`(!!rlang::sym(paste0(drvd_var_prefix_1L_chr, 
             "_", sias_ctg_sfx_1L_chr)), !!rlang::sym(paste0(drvd_var_prefix_1L_chr, 
-            "_", sias_ttl_sfx_1L_chr)) %>% purrr::map_chr(~ifelse(.x < 
+            "_", sias_tot_sfx_1L_chr)) %>% purrr::map_chr(~ifelse(.x < 
             34, "Normal_Range", ifelse(.x < 43, "Social_Phobia", 
             "Social_Anxiety"))) %>% factor(levels = c("Normal_Range", 
             "Social_Phobia", "Social_Anxiety"), ordered = T))) %>% 

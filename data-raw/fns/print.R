@@ -29,7 +29,7 @@ print_mdl_smry_kbl <- function(tfd_mdl_smry_tb,
     kableExtra::kbl(booktabs = T, longtable = T,
                     caption = caption_1L_chr) %>%
     kableExtra::kable_styling() %>%
-    kableExtra::pack_rows(index=make_smry_grouping_idxs(tfd_mdl_smry_tb,records_ls = records_ls)) %>%
+    kableExtra::pack_rows(index=make_smry_grouping_indcs(tfd_mdl_smry_tb,records_ls = records_ls)) %>%
     kableExtra::footnote(general = footnotes_chr)
   return(mdl_smry_kbl)
 }

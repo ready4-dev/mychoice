@@ -4,15 +4,15 @@
 \name{mychoice-package}
 \alias{mychoice}
 \alias{mychoice-package}
-\title{mychoice: Model Youth Choice Behaviours}
+\title{mychoice: Model Youth Choice Behaviours with Ready4}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools for modelling the choice behaviours of young people relating to their mental health. Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
+Tools for modelling the choice behaviours with the ready4 youth mental health systems model (https://www.ready4-dev.com/). Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
 
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools for modelling the choice behaviours of young people relating to their mental health. Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
+Tools for modelling the choice behaviours with the ready4 youth mental health systems model (https://www.ready4-dev.com/). Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
 }
 \seealso{
 Useful links:

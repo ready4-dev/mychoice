@@ -42,7 +42,7 @@ print_mdl_smry_kbl <- function (tfd_mdl_smry_tb, records_ls, caption_1L_chr, foo
         footnotes_chr <- "Significance codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘n.s.’ 1"
     mdl_smry_kbl <- tfd_mdl_smry_tb %>% dplyr::select(-Concept) %>% 
         kableExtra::kbl(booktabs = T, longtable = T, caption = caption_1L_chr) %>% 
-        kableExtra::kable_styling() %>% kableExtra::pack_rows(index = make_smry_grouping_idxs(tfd_mdl_smry_tb, 
+        kableExtra::kable_styling() %>% kableExtra::pack_rows(index = make_smry_grouping_indcs(tfd_mdl_smry_tb, 
         records_ls = records_ls)) %>% kableExtra::footnote(general = footnotes_chr)
     return(mdl_smry_kbl)
 }

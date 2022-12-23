@@ -283,7 +283,7 @@ transform_repln_ds_for_analysis <- function (repln_ds_tb, areas_lup = NULL, cons
         dplyr::mutate(rc_pilot_participant = purrr::map_lgl(rc_pilot_participant, 
             ~switch(.x %>% as.numeric(), T, F, NA))) %>% add_sias_totals(itm_prefix_1L_chr = "Ent_DCE_SIAS", 
         drvd_var_prefix_1L_chr = "der", sias_ctg_sfx_1L_chr = "SIAS_ctg", 
-        sias_ttl_sfx_1L_chr = "SIAS_ttl") %>% dplyr::mutate(der_SIAS_nr = purrr::map_lgl(der_SIAS_ctg, 
+        sias_tot_sfx_1L_chr = "SIAS_tot") %>% dplyr::mutate(der_SIAS_nr = purrr::map_lgl(der_SIAS_ctg, 
         ~ifelse(.x == "Normal_Range", T, F))) %>% dplyr::mutate(der_SIAS_sa = purrr::map_lgl(der_SIAS_ctg, 
         ~ifelse(.x == "Social_Anxiety", T, F))) %>% dplyr::rename(rc_time_taken_secs = `Duration (in seconds)`) %>% 
         dplyr::mutate(rc_time_taken_secs = as.numeric(rc_time_taken_secs)) %>% 
@@ -318,7 +318,7 @@ transform_repln_ds_for_analysis <- function (repln_ds_tb, areas_lup = NULL, cons
                 } else {
                   set_idx_1L_int
                 }
-            }]]$block_idxs_ls[[1]])) %>% dplyr::ungroup() %>% 
+            }]]$block_indcs_ls[[1]])) %>% dplyr::ungroup() %>% 
         dplyr::mutate(der_All_Tasks = der_Missing_Tasks == 0)
     tfd_repln_ds_tb <- tfd_repln_ds_tb %>% dplyr::mutate(der_urban = dplyr::case_when(der_SOS %in% 
         c("Major Urban", "Other Urban") ~ T, T ~ F)) %>% dplyr::mutate(der_STE_VIC = dplyr::case_when(der_STE == 

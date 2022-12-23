@@ -9,8 +9,8 @@ ready4fun::write_fn_type_dirs()
 # MANUAL STEP. Write all your functions to R files in the new "fns" directory.
 fns_env_ls <- ready4fun::read_fns(c("data-raw/fns/","data-raw/mthds/"),
                                   fns_env = new.env(parent = globalenv()))
-x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviours",
-                                 pkg_desc_1L_chr = "Tools for modelling the choice behaviours of young people relating to their mental health. Supports standardised workflows for the design and analysis of Discrete Choice Experiments.
+x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviours With Ready4",
+                                 pkg_desc_1L_chr = "Tools for modelling the choice behaviours with the ready4 youth mental health systems model (https://www.ready4-dev.com/). Supports standardised workflows for the design and analysis of Discrete Choice Experiments.
   This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).",
                                  authors_prsn = c(utils::person(given = "Matthew",family = "Hamilton",email = "matthew.hamilton@orygen.org.au", role = c("aut", "cre"),comment = c(ORCID = "0000-0001-7407-9194")),
                                                   #utils::person(given = "Caroline",family = "Gao",email = "caroline.gao@orygen.org.au", role = c("aut"),comment = c(ORCID = "0000-0002-0987-2759")),
@@ -56,15 +56,16 @@ x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviou
 z <- ready4pack::make_pt_ready4pack_manifest(x) %>%
   ready4pack::ready4pack_manifest()
 z <- ready4::author(z)
-ready4::write_citation_cff(packageDescription("mychoice"),
-                           citation_chr = readLines("inst/CITATION"))
-readLines(".github/workflows/R-CMD-check.yaml") %>%
-  stringr::str_replace_all("r-lib/actions/setup-r@master","r-lib/actions/setup-r@v2") %>%
-  stringr::str_replace_all("r-lib/actions/setup-pandoc@master","r-lib/actions/setup-pandoc@v2") %>%
-  writeLines(con = ".github/workflows/R-CMD-check.yaml")
+ready4::write_extra_pkgs_to_actions()
+# devtools::build_vignettes()
+# ready4::write_citation_cff(packageDescription("mychoice"),
+#                            citation_chr = readLines("inst/CITATION"))
+# readLines(".github/workflows/R-CMD-check.yaml") %>%
+#   stringr::str_replace_all("r-lib/actions/setup-r@master","r-lib/actions/setup-r@v2") %>%
+#   stringr::str_replace_all("r-lib/actions/setup-pandoc@master","r-lib/actions/setup-pandoc@v2") %>%
+#   writeLines(con = ".github/workflows/R-CMD-check.yaml")
 # May need to ad lwgeom pkg
 # usethis::use_dev_package("specific",
 #                          remote = "ready4-dev/specific")
-# devtools::build_vignettes()
 # Note, on initial setup ran commands from: https://usethis.r-lib.org/reference/use_pkgdown.html
 # May need to link to this help text for Mac users: https://stackoverflow.com/questions/70638118/configuring-compilers-on-mac-m1-big-sur-monterey-for-rcpp-and-other-tools

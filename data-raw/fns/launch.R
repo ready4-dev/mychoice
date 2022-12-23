@@ -14,7 +14,7 @@ launch_survey_preview <- function(dce_design_ls,
   des_mat <- dce_design_ls$efnt_dsn_ls[[set_idx_1L_int]]$design
   if(!identical(block_1L_int, integer(0))){
     intro_sfx_1L_chr <- paste0("(Choice cards from  block ", block_1L_int,")")
-    indcs_int <- dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_idxs_ls[[block_1L_int]]
+    indcs_int <- dce_design_ls$choice_cards_ls[[set_idx_1L_int]]$block_indcs_ls[[block_1L_int]]
     des_mat <- des_mat[cut(1:nrow(des_mat),
                            dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int, labels=F) %in% indcs_int ,]
     total_1L_int <- dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int / dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int

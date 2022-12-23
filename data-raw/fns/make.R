@@ -153,7 +153,7 @@ make_cards_html_ls <- function(block_choice_tbs_ls){
              ~ make_choice_card_html(block_choice_tbs_ls %>% purrr::pluck(.x)))
 }
 make_case_choices_mat <- function(ds_tb,
-                                  block_idxs_ls,
+                                  block_indcs_ls,
                                   choice_sets_ls,
                                   design_mat,
                                   choice_vars_pfx_1L_chr = "DCE_B"){
@@ -171,7 +171,7 @@ make_case_choices_mat <- function(ds_tb,
                                     }
   )
   reordered_mat <- reorder_design_mat(design_mat = design_mat,
-                                      block_idxs_ls = block_idxs_ls,
+                                      block_indcs_ls = block_indcs_ls,
                                       choice_sets_ls = choice_sets_ls)
   case_choices_mat <- purrr::map(all_choices_indcs_ls,
                                  ~ reordered_mat[.x,]) %>%
@@ -229,7 +229,7 @@ make_choice_card_html <- function(choice_card_tb){
   return(card_kbl)
 }
 make_choice_cards <- function(dce_design_ls,
-                              block_idxs_ls = list(),
+                              block_indcs_ls = list(),
                               seed_1L_int = 1987,
                               set_idx_1L_int = integer(0),
                               transform_att_nms_1L_lgl = T){
@@ -260,20 +260,20 @@ make_choice_cards <- function(dce_design_ls,
   colnames(choices_tb) <- c("Choice", attributes_chr)
   choices_tb <- choices_tb %>%
     dplyr::filter(!startsWith(Choice, "no"))
-  if(identical(block_idxs_ls,list())){
+  if(identical(block_indcs_ls,list())){
     indices_int <- 1:dce_design_ls$choice_sets_ls$nbr_of_sets_1L_int
     folds_int <- cut(indices_int,
                      breaks = dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int,
                      labels = FALSE) %>% sample()
-    block_idxs_ls <- 1:dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int %>%
+    block_indcs_ls <- 1:dce_design_ls$choice_sets_ls$nbr_of_blocks_1L_int %>%
       purrr::map(~indices_int[folds_int==.x])
   }
-  choice_cards_tb_ls <- purrr::map(block_idxs_ls,
+  choice_cards_tb_ls <- purrr::map(block_indcs_ls,
                                    ~ make_choice_cards_tb_ls(.x,choices_tb))
   choice_cards_html_ls <- purrr::map(choice_cards_tb_ls,
                                      ~ make_cards_html_ls(.x))
   choice_cards_ls <- list(survey_ls = survey_ls,
-                          block_idxs_ls = block_idxs_ls,
+                          block_indcs_ls = block_indcs_ls,
                           choices_tb = choices_tb,
                           choice_cards_tb_ls = choice_cards_tb_ls,
                           choice_cards_html_ls = choice_cards_html_ls)
@@ -563,7 +563,7 @@ make_choices_ls <- function(dce_design_ls,
     length(dce_design_ls$choice_cards_ls)
     }else{
       set_idx_1L_int
-    }}]]$block_idxs_ls[[block_idx_1L_int]][card_idx_1L_int]-1)*alternatives_1L_int + 1
+    }}]]$block_indcs_ls[[block_idx_1L_int]][card_idx_1L_int]-1)*alternatives_1L_int + 1
   choice_mat <- dce_design_ls$efnt_dsn_ls[[{if(identical(set_idx_1L_int,integer(0))){
     length(dce_design_ls$efnt_dsn_ls)
   }else{
@@ -1131,11 +1131,11 @@ make_pilot_analysis_ls <- function(pilot_ds_tb,
   pilot_ds_tb <- pilot_ds_tb %>%
     make_choice_responses_ds(choice_vars_pfx_1L_chr = choice_var_pfx_1L_chr)
   case_choices_mat <- make_case_choices_mat(pilot_ds_tb,
-                                            block_idxs_ls = dce_design_ls$choice_cards_ls[[{if(identical(set_idx_1L_int,integer(0))){
+                                            block_indcs_ls = dce_design_ls$choice_cards_ls[[{if(identical(set_idx_1L_int,integer(0))){
                                               length(dce_design_ls$choice_cards_ls)
                                             }else{
                                               set_idx_1L_int
-                                            }}]]$block_idxs_ls,
+                                            }}]]$block_indcs_ls,
                                             choice_sets_ls = dce_design_ls$choice_sets_ls,
                                             design_mat = dce_design_ls$efnt_dsn_ls[[{if(identical(set_idx_1L_int,integer(0))){
                                               length(dce_design_ls$efnt_dsn_ls)
@@ -1385,9 +1385,9 @@ make_signft_concepts_tbl <- function(att_predn_mdls_ls,
     dplyr::arrange(dplyr::desc(total_int), concept_chr)
   return(signft_concepts_tb)
 }
-make_smry_grouping_idxs <- function(mdl_smry_tb,
+make_smry_grouping_indcs <- function(mdl_smry_tb,
                                     records_ls){
-  smry_grouping_idxs_int <- mdl_smry_tb$Concept %>% unique() %>%
+  smry_grouping_indcs_int <- mdl_smry_tb$Concept %>% unique() %>%
     purrr::map_int(~mdl_smry_tb %>% dplyr::filter(Concept==.x) %>% nrow()) %>%
     stats::setNames(mdl_smry_tb$Concept %>% unique() %>%
                       purrr::map_chr(~{
@@ -1399,7 +1399,7 @@ make_smry_grouping_idxs <- function(mdl_smry_tb,
                           stringr::str_replace_all("_"," ")
                       }
                       ))
-  return(smry_grouping_idxs_int)
+  return(smry_grouping_indcs_int)
 }
 make_smry_tb <- function(ds_tb,
                          var_metadata_tb,

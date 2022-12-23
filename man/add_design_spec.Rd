@@ -10,7 +10,7 @@ add_design_spec(
   add_cndt_design_mat = F,
   alternatives_chr = character(0),
   att_lvls_tb = tibble::tibble(),
-  block_idxs_ls = list(),
+  block_indcs_ls = list(),
   choice_var_pfx_1L_chr = "DCE_B",
   constraints_ls = list(),
   cost_att_idx_1L_int = integer(0),
@@ -41,7 +41,7 @@ add_design_spec(
 
 \item{att_lvls_tb}{Attribute levels (a tibble), Default: tibble::tibble()}
 
-\item{block_idxs_ls}{Block indices (a list), Default: list()}
+\item{block_indcs_ls}{Block indices (a list), Default: list()}
 
 \item{choice_var_pfx_1L_chr}{Choice variable prefix (a character vector of length one), Default: 'DCE_B'}
 

@@ -9,7 +9,7 @@ add_sias_totals(
   itm_prefix_1L_chr,
   drvd_var_prefix_1L_chr,
   sias_ctg_sfx_1L_chr = "SIAS_ctg",
-  sias_ttl_sfx_1L_chr = "SIAS_ttl"
+  sias_tot_sfx_1L_chr = "SIAS_tot"
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ add_sias_totals(
 
 \item{sias_ctg_sfx_1L_chr}{Social Interaction Anxiety Scale category suffix (a character vector of length one), Default: 'SIAS_ctg'}
 
-\item{sias_ttl_sfx_1L_chr}{Social Interaction Anxiety Scale total suffix (a character vector of length one), Default: 'SIAS_ttl'}
+\item{sias_tot_sfx_1L_chr}{Social Interaction Anxiety Scale total suffix (a character vector of length one), Default: 'SIAS_tot'}
 }
 \value{
 Data (a tibble)
