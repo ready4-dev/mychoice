@@ -2,7 +2,7 @@ library(ready4)
 #library(generics)
 library(ready4show)
 library(ready4use)
-library(youthvars)
+# library(youthvars)
 # library(scorz)
 # library(specific)
 ready4fun::write_fn_type_dirs()
@@ -14,7 +14,8 @@ x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviou
                                  Supports standardised workflows for the design and analysis of Discrete Choice Experiments.
                                  This development version of the mychoice package has been made available as part of the process of testing and documenting the package.
                                  If you have any questions, please contact the authors (matthew.hamilton1@monash.edu).",
-                                 authors_prsn = c(utils::person(given = "Matthew",family = "Hamilton",email = "matthew.hamilton1@monash.edu", role = c("aut", "cre", "fnd"),comment = c(ORCID = "0000-0001-7407-9194")),
+                                 authors_prsn = c(utils::person(given = "Matthew",family = "Hamilton", email = "matthew.hamilton1@monash.edu",
+                                                                role = c("aut", "cre", "fnd"),comment = c(ORCID = "0000-0001-7407-9194")),
                                                   #utils::person(given = "Caroline",family = "Gao",email = "caroline.gao@orygen.org.au", role = c("aut"),comment = c(ORCID = "0000-0002-0987-2759")),
                                                   utils::person("Orygen", role = c("cph", "fnd"))#,
                                                   # utils::person("Headspace", role = c( "fnd")),
@@ -28,24 +29,26 @@ x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviou
     build_ignore_ls = ready4fun::make_build_ignore_ls(file_nms_chr = c("initial_setup.R")),
     check_type_1L_chr = "ready4",
     copyright_holders_chr = "Orygen",
-    custom_dmt_ls = ready4fun::make_custom_dmt_ls(user_manual_fns_chr = c("add_age_and_area_cmprsns",
-                                                                          "add_analysis",
-                                                                          "add_choice_mdls",
-                                                                          "add_cost_comparison",
-                                                                          "add_cut_pnts_cmprsn",
-                                                                          "add_new_choice_cmprsn",
-                                                                          "add_flags",
-                                                                          "make_case_choices_mat",
-                                                                          "make_choice_mdlng_ds",
-                                                                          "make_choice_smrys",
-                                                                          "make_flags_smry_ls",
-                                                                          "make_mdl_params_ls",
-                                                                          "make_smry_tb",
-                                                                          "remove_no_choice_responses",
-                                                                          "remove_red_flag_cases",
-                                                                          "transform_repln_ds_for_analysis",
-                                                                          "write_choice_mdlng_ws",
-                                                                          "write_preprocessing_outp")),##
+    custom_dmt_ls = ready4fun::make_custom_dmt_ls(user_manual_fns_chr = c("add_nothing"
+      # "add_age_and_area_cmprsns",
+      #                                                                     "add_analysis",
+      #                                                                     "add_choice_mdls",
+      #                                                                     "add_cost_comparison",
+      #                                                                     "add_cut_pnts_cmprsn",
+      #                                                                     "add_new_choice_cmprsn",
+      #                                                                     "add_flags",
+      #                                                                     "make_case_choices_mat",
+      #                                                                     "make_choice_mdlng_ds",
+      #                                                                     "make_choice_smrys",
+      #                                                                     "make_flags_smry_ls",
+      #                                                                     "make_mdl_params_ls",
+      #                                                                     "make_smry_tb",
+      #                                                                     "remove_no_choice_responses",
+      #                                                                     "remove_red_flag_cases",
+      #                                                                     "transform_repln_ds_for_analysis",
+      #                                                                     "write_choice_mdlng_ws",
+      #                                                                     "write_preprocessing_outp"
+      )),##
     dev_pkgs_chr = c("ready4",#"ready4fun",
                      "ready4use","ready4show",
                      "youthvars"),

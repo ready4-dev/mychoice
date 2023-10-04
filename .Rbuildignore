@@ -35,3 +35,15 @@
 ^data-raw/fns/knit\.R$
 ^data-raw/fns/print\.R$
 ^data-raw/Meta/vignette\.rds$
+^data-raw/BUPfns/add\.R$
+^data-raw/BUPfns/fit\.R$
+^data-raw/BUPfns/get\.R$
+^data-raw/BUPfns/knit\.R$
+^data-raw/BUPfns/launch\.R$
+^data-raw/BUPfns/make\.R$
+^data-raw/BUPfns/predict\.R$
+^data-raw/BUPfns/print\.R$
+^data-raw/BUPfns/remove\.R$
+^data-raw/BUPfns/reorder\.R$
+^data-raw/BUPfns/transform\.R$
+^data-raw/BUPfns/write\.R$
