@@ -34,3 +34,4 @@
 ^data-raw/fns/reorder\.R$
 ^data-raw/fns/knit\.R$
 ^data-raw/fns/print\.R$
+^data-raw/Meta/vignette\.rds$

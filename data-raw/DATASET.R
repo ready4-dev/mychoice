@@ -10,8 +10,10 @@ ready4fun::write_fn_type_dirs()
 fns_env_ls <- ready4fun::read_fns(c("data-raw/fns/","data-raw/mthds/"),
                                   fns_env = new.env(parent = globalenv()))
 x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Model Youth Choice Behaviours" %>% tools::toTitleCase(),
-                                 pkg_desc_1L_chr = "Tools for modelling choice behaviours in youth mental health economic models. Supports standardised workflows for the design and analysis of Discrete Choice Experiments.
-  This development version of the mychoice package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton1@monash.edu).",
+                                 pkg_desc_1L_chr = "Tools for modelling choice behaviours in youth mental health economic models.
+                                 Supports standardised workflows for the design and analysis of Discrete Choice Experiments.
+                                 This development version of the mychoice package has been made available as part of the process of testing and documenting the package.
+                                 If you have any questions, please contact the authors (matthew.hamilton1@monash.edu).",
                                  authors_prsn = c(utils::person(given = "Matthew",family = "Hamilton",email = "matthew.hamilton1@monash.edu", role = c("aut", "cre", "fnd"),comment = c(ORCID = "0000-0001-7407-9194")),
                                                   #utils::person(given = "Caroline",family = "Gao",email = "caroline.gao@orygen.org.au", role = c("aut"),comment = c(ORCID = "0000-0002-0987-2759")),
                                                   utils::person("Orygen", role = c("cph", "fnd"))#,

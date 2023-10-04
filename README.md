@@ -10,11 +10,11 @@
 <!-- badges: end -->
 
 Tools for modelling choice behaviours in youth mental health
-economic models. Supports standardised workflows for the design and
+economic models.  Supports standardised workflows for the design and
 analysis of Discrete Choice Experiments.  This development version of
 the mychoice package has been made available as part of the process of
-testing and documenting the package. If you have any questions, please
-contact the authors (matthew.hamilton1@monash.edu).
+testing and documenting the package.  If you have any questions,
+please contact the authors (matthew.hamilton1@monash.edu).
 
 To install a development version of this software, run the following commands in your R console:
 
