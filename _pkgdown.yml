@@ -15,4 +15,4 @@ development:
 reference:
 - title: "Functions"
 - contents:
-  - add_nothing
+  - add_age_and_area_cmprsns

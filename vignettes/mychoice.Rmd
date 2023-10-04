@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, warning=FALSE}
+```{r setup, warning=FALSE, message=FALSE}}
 library(mychoice)
 ```
 The tools in mychoice are designed to make it easier to develop and use choice models with the [ready4 youth mental health economic model](https://www.ready4-dev.com/docs/model/) (or any other model developed with the [ready4 framework](https://www.ready4-dev.com)).

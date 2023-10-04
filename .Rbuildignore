@@ -47,3 +47,4 @@
 ^data-raw/BUPfns/reorder\.R$
 ^data-raw/BUPfns/transform\.R$
 ^data-raw/BUPfns/write\.R$
+^data-raw/testfns/add\.R$

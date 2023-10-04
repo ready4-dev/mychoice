@@ -15,10 +15,10 @@ make_areas_lup <- function(X_Ready4useRepos = ready4use::Ready4useRepos(),
                                    dv_server_1L_chr = "dataverse.harvard.edu")
   if(identical(write_to_1L_chr, character(0)))
     write_to_1L_chr <- tempdir()
-  path_1L_chr <- make_local_path_to_dv_data(save_dir_path_1L_chr = write_to_1L_chr,
+  path_1L_chr <- ready4::make_local_path_to_dv_data(save_dir_path_1L_chr = write_to_1L_chr,
                                             fl_nm_1L_chr = fl_nm_1L_chr,
                                             save_fmt_1L_chr = save_fmt_1L_chr)
-  write_dv_fl_to_loc(ds_ui_1L_chr = X@dv_ds_nm_1L_chr,
+  ready4::write_dv_fl_to_loc(ds_ui_1L_chr = X@dv_ds_nm_1L_chr,
                      fl_nm_1L_chr = fl_nm_1L_chr,
                      repo_fl_fmt_1L_chr = repo_fl_fmt_1L_chr,
                      save_type_1L_chr = save_type_1L_chr,
