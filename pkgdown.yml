@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   mychoice: mychoice.html
-last_built: 2022-12-23T07:08Z
+last_built: 2023-10-04T07:25Z
 urls:
   reference: https://ready4-dev.github.io/mychoice/reference
   article: https://ready4-dev.github.io/mychoice/articles
