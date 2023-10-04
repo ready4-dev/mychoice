@@ -1,6 +1,6 @@
 Package: mychoice
 Title: Model Youth Choice Behaviours
-Version: 0.0.0.9020
+Version: 0.0.0.9021
 Authors@R: c(
     person("Matthew", "Hamilton", , "matthew.hamilton1@monash.edu", role = c("aut", "cre", "fnd"),
            comment = c(ORCID = "0000-0001-7407-9194")),
@@ -19,46 +19,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
-    CGPfunctions,
-    dfidx,
-    dplyr,
-    english,
-    Formula,
-    ggplot2,
-    gmnl,
-    Hmisc,
-    idefix,
-    janitor,
-    kableExtra,
     knitr,
-    lessR,
     lifecycle,
-    lubridate,
     magrittr,
-    MASS,
     methods,
-    mlogit,
-    msm,
-    purrr,
-    readxl,
-    ready4 (>= 0.0.0.9125),
-    ready4use (>= 0.0.0.9231),
-    rlang,
-    rnaturalearth,
-    rstatix,
-    sf,
-    stats,
-    stringi,
-    stringr,
-    summarytools,
-    testthat,
-    tibble,
-    tidyselect,
-    units,
-    utils
+    testthat
 VignetteBuilder: knitr
 Suggests: 
     rmarkdown
-Remotes: 
-    ready4-dev/ready4,
-    ready4-dev/ready4use
