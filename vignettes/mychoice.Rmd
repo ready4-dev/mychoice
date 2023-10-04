@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup, warning=FALSE}
 library(mychoice)
 ```
-The tools in mychoice are designed to make it easier to develop and use choice models with [ready4 - an open source health economic model of the systems shaping mental health and wellbeing in young people](https://www.ready4-dev.com).
+The tools in mychoice are designed to make it easier to develop and use choice models with the [ready4 youth mental health economic model](https://www.ready4-dev.com/docs/model/) (or any other model developed with the [ready4 framework](https://www.ready4-dev.com)).
 
 This development version of the mychoice package has been made available as part of the process of testing and documenting the package. 
 

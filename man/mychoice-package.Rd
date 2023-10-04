@@ -4,15 +4,15 @@
 \name{mychoice-package}
 \alias{mychoice}
 \alias{mychoice-package}
-\title{mychoice: Model Youth Choice Behaviours with Ready4}
+\title{mychoice: Model Youth Choice Behaviours}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools for modelling the choice behaviours with the ready4 youth mental health systems model (https://www.ready4-dev.com/). Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
+Tools for modelling choice behaviours in youth mental health economic models. Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the mychoice package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton1@monash.edu).
 
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools for modelling the choice behaviours with the ready4 youth mental health systems model (https://www.ready4-dev.com/). Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the youthu package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton@orygen.org.au).
+Tools for modelling choice behaviours in youth mental health economic models. Supports standardised workflows for the design and analysis of Discrete Choice Experiments. This development version of the mychoice package has been made available as part of the process of testing and documenting the package. If you have any questions, please contact the authors (matthew.hamilton1@monash.edu).
 }
 \seealso{
 Useful links:
@@ -32,7 +32,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton@orygen.org.au} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID})
+\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton1@monash.edu} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID}) [funder]
 
 Other contributors:
 \itemize{

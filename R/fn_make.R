@@ -1912,7 +1912,7 @@ make_smry_tb <- function (ds_tb, var_metadata_tb, digits_1L_int = 2L)
                     measures_chr <- measures_chr %>% stringr::str_replace_all("FALSE", 
                       ready4::get_from_lup_obj(var_metadata_tb, 
                         match_value_xx = ..2, match_var_nm_1L_chr = "short_name_chr", 
-                        target_var_nm_1L_chr = "false_value_chr") %>% 
+                        target_var_nm_1L_chr = "false_match_value_xx") %>% 
                         Hmisc::capitalize()) %>% stringr::str_replace_all("TRUE", 
                       ready4::get_from_lup_obj(var_metadata_tb, 
                         match_value_xx = ..2, match_var_nm_1L_chr = "short_name_chr", 
