@@ -1,5 +1,5 @@
 #' Transform descriptives tibble
-#' @description transform_descvs_tb() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform descriptives tibble. Function argument descvs_tb specifies the object to be updated. The function returns Transformed descriptives (a tibble).
+#' @description transform_descvs_tb() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform descriptives tibble. The function returns Transformed descriptives (a tibble).
 #' @param descvs_tb Descriptives (a tibble)
 #' @return Transformed descriptives (a tibble)
 #' @rdname transform_descvs_tb
@@ -19,7 +19,7 @@ transform_descvs_tb <- function (descvs_tb)
     return(tfd_descvs_tb)
 }
 #' Transform model summary
-#' @description transform_mdl_smry() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform model summary. Function argument mdl_smry_tb specifies the object to be updated. Argument dce_design_ls provides the object to be updated. The function returns Model summary (a tibble).
+#' @description transform_mdl_smry() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform model summary. The function returns Model summary (a tibble).
 #' @param mdl_smry_tb Model summary (a tibble)
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param records_ls Records (a list)
@@ -249,7 +249,7 @@ transform_mdl_smry <- function (mdl_smry_tb, dce_design_ls, records_ls, mdl_para
     return(mdl_smry_tb)
 }
 #' Transform replication dataset for analysis
-#' @description transform_repln_ds_for_analysis() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform replication dataset for analysis. Function argument repln_ds_tb specifies the object to be updated. Argument areas_lup provides the object to be updated. The function returns Transformed replication dataset (a tibble).
+#' @description transform_repln_ds_for_analysis() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform replication dataset for analysis. The function returns Transformed replication dataset (a tibble).
 #' @param repln_ds_tb Replication dataset (a tibble)
 #' @param areas_lup Areas (a lookup table), Default: NULL
 #' @param consent_1L_chr Consent (a character vector of length one), Default: ''
@@ -338,11 +338,11 @@ transform_repln_ds_for_analysis <- function (repln_ds_tb, areas_lup = NULL, cons
     return(tfd_repln_ds_tb)
 }
 #' Transform to excel date format
-#' @description transform_to_excel_date_fmt() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform to excel date format. Function argument date_chr specifies the object to be updated. Argument format_1L_chr provides the object to be updated. The function is called for its side effects and does not return a value.
+#' @description transform_to_excel_date_fmt() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform to excel date format. The function is called for its side effects and does not return a value.
 #' @param date_chr Date (a character vector)
 #' @param format_1L_chr Format (a character vector of length one), Default: 'ymd HMS'
 #' @param index_date_1L_chr Index date (a character vector of length one), Default: '1899-12-30'
-#' @return NULL
+#' @return No return value, called for side effects.
 #' @rdname transform_to_excel_date_fmt
 #' @export 
 #' @importFrom lubridate parse_date_time as_date interval int_flip days

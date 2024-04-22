@@ -15,6 +15,6 @@ get_att_smrys(dce_design_ls, return_1L_chr = "levels")
 Return (an output object of multiple potential types)
 }
 \description{
-get_att_smrys() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attribute summarys. Function argument dce_design_ls specifies the where to look for the required object. The function returns Return (an output object of multiple potential types).
+get_att_smrys() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get attribute summarys. The function returns Return (an output object of multiple potential types).
 }
 \keyword{internal}

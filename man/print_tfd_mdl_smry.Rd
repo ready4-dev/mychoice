@@ -48,6 +48,6 @@ print_tfd_mdl_smry(
 Transformed model summary (a kable)
 }
 \description{
-print_tfd_mdl_smry() is a Print function that prints output to console Specifically, this function implements an algorithm to print transformed model summary. The function is called for its side effects and does not return a value.
+print_tfd_mdl_smry() is a Print function that prints output to console. Specifically, this function implements an algorithm to print transformed model summary. The function is called for its side effects and does not return a value.
 }
 \keyword{internal}

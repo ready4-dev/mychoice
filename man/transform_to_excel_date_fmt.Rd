@@ -17,7 +17,10 @@ transform_to_excel_date_fmt(
 
 \item{index_date_1L_chr}{Index date (a character vector of length one), Default: '1899-12-30'}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-transform_to_excel_date_fmt() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform to excel date format. Function argument date_chr specifies the object to be updated. Argument format_1L_chr provides the object to be updated. The function is called for its side effects and does not return a value.
+transform_to_excel_date_fmt() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform to excel date format. The function is called for its side effects and does not return a value.
 }
 \keyword{internal}

@@ -15,6 +15,6 @@ get_fctr_atts_dummy_var_nms(att_lvls_tb, flatten_1L_lgl = F)
 Factor attributes dummy variable names (an output object of multiple potential types)
 }
 \description{
-get_fctr_atts_dummy_var_nms() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get factor attributes dummy variable names. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Factor attributes dummy variable names (an output object of multiple potential types).
+get_fctr_atts_dummy_var_nms() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get factor attributes dummy variable names. The function returns Factor attributes dummy variable names (an output object of multiple potential types).
 }
 \keyword{internal}

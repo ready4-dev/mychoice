@@ -9,6 +9,9 @@ make_cards_html_ls(block_choice_tbs_ls)
 \arguments{
 \item{block_choice_tbs_ls}{Block choice tibbles (a list)}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 make_cards_html_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make cards html list. The function is called for its side effects and does not return a value.
 }

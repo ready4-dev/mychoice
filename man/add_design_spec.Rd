@@ -81,6 +81,6 @@ add_design_spec(
 Discrete choice experiment design (a list)
 }
 \description{
-add_design_spec() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add design specification. Function argument dce_design_ls specifies the object to be updated. The function returns Discrete choice experiment design (a list).
+add_design_spec() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add design specification. The function returns Discrete choice experiment design (a list).
 }
 \keyword{internal}

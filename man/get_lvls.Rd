@@ -15,6 +15,6 @@ get_lvls(att_lvls_tb, return_1L_chr = "all")
 Levels (a list)
 }
 \description{
-get_lvls() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get levels. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Levels (a list).
+get_lvls() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get levels. The function returns Levels (a list).
 }
 \keyword{internal}

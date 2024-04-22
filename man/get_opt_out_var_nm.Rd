@@ -15,6 +15,6 @@ get_opt_out_var_nm(case_choices_mat, choice_sets_ls)
 Opt out name (a character vector of length one)
 }
 \description{
-get_opt_out_var_nm() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get opt out variable name. Function argument case_choices_mat specifies the where to look for the required object. The function returns Opt out name (a character vector of length one).
+get_opt_out_var_nm() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get opt out variable name. The function returns Opt out name (a character vector of length one).
 }
 \keyword{internal}

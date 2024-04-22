@@ -29,7 +29,10 @@ launch_survey_preview(
 
 \item{transform_att_nms_1L_lgl}{Transform attribute names (a logical vector of length one), Default: T}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-launch_survey_preview() is a Launch function that launches an application Specifically, this function implements an algorithm to launch survey preview. The function is called for its side effects and does not return a value.
+launch_survey_preview() is a Launch function that launches an R Shiny app. Specifically, this function implements an algorithm to launch survey preview. The function is called for its side effects and does not return a value.
 }
 \keyword{internal}

@@ -1,5 +1,5 @@
 #' Remove no choice responses
-#' @description remove_no_choice_responses() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove no choice responses. Function argument responses_tb specifies the object to be updated. Argument choice_card_pfx_1L_chr provides the object to be updated. The function returns Responses (a tibble).
+#' @description remove_no_choice_responses() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove no choice responses. The function returns Responses (a tibble).
 #' @param responses_tb Responses (a tibble)
 #' @param choice_card_pfx_1L_chr Choice card prefix (a character vector of length one), Default: 'DCE_B'
 #' @return Responses (a tibble)
@@ -16,7 +16,7 @@ remove_no_choice_responses <- function (responses_tb, choice_card_pfx_1L_chr = "
     return(responses_tb)
 }
 #' Remove red flag cases
-#' @description remove_red_flag_cases() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove red flag cases. Function argument data_tb specifies the object to be updated. Argument flags_max_1L_int provides the object to be updated. The function returns Data (a tibble).
+#' @description remove_red_flag_cases() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove red flag cases. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param flags_max_1L_int Flags maximum (an integer vector of length one), Default: 0
 #' @param flags_tot_var_nm_1L_chr Flags total variable name (a character vector of length one), Default: 'red_flag_count_int'

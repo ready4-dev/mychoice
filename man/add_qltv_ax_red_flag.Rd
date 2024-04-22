@@ -17,6 +17,6 @@ add_qltv_ax_red_flag(data_tb, qltv_ax_red_flag_1L_chr, qltv_ax_var_nm_1L_chr)
 Data (a tibble)
 }
 \description{
-add_qltv_ax_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add qualitative assessment red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_qltv_ax_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add qualitative assessment red flag. The function returns Data (a tibble).
 }
 \keyword{internal}

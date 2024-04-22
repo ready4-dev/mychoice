@@ -2,7 +2,6 @@
 % Please edit documentation in R/mychoice-package.R, R/pkg_mychoice.R
 \docType{package}
 \name{mychoice-package}
-\alias{mychoice}
 \alias{mychoice-package}
 \title{mychoice: Model Youth Choice Behaviours}
 \description{
@@ -32,7 +31,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton1@monash.edu} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID}) [funder]
+\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton1@monash.edu} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID}) [funder, copyright holder]
 
 Other contributors:
 \itemize{

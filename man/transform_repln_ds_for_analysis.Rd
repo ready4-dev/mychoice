@@ -33,6 +33,6 @@ transform_repln_ds_for_analysis(
 Transformed replication dataset (a tibble)
 }
 \description{
-transform_repln_ds_for_analysis() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform replication dataset for analysis. Function argument repln_ds_tb specifies the object to be updated. Argument areas_lup provides the object to be updated. The function returns Transformed replication dataset (a tibble).
+transform_repln_ds_for_analysis() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform replication dataset for analysis. The function returns Transformed replication dataset (a tibble).
 }
 \keyword{internal}

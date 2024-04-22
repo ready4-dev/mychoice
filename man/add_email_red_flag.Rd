@@ -17,6 +17,6 @@ add_email_red_flag(data_tb, email_var_nm_1L_chr, email_max_cnstv_digits_1L_int)
 Data (a tibble)
 }
 \description{
-add_email_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add email red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_email_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add email red flag. The function returns Data (a tibble).
 }
 \keyword{internal}

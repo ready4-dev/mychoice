@@ -17,6 +17,6 @@ print_cmprsn_kbl(cmprsn_tb, caption_1L_chr, footnotes_chr = character(0))
 Comparison (a kable)
 }
 \description{
-print_cmprsn_kbl() is a Print function that prints output to console Specifically, this function implements an algorithm to print comparison kable. The function is called for its side effects and does not return a value.
+print_cmprsn_kbl() is a Print function that prints output to console. Specifically, this function implements an algorithm to print comparison kable. The function is called for its side effects and does not return a value.
 }
 \keyword{internal}

@@ -15,4 +15,7 @@ Card (a kable)
 \description{
 make_choice_card_html() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make choice card html. The function is called for its side effects and does not return a value.
 }
+\seealso{
+\code{\link[knitr:kable]{knitr::kable()}}
+}
 \keyword{internal}

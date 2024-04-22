@@ -27,6 +27,6 @@ add_sias_totals(
 Data (a tibble)
 }
 \description{
-add_sias_totals() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add social interaction anxiety scale totals. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_sias_totals() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add social interaction anxiety scale totals. The function returns Data (a tibble).
 }
 \keyword{internal}

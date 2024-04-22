@@ -69,6 +69,6 @@ add_flags(
 Records (a list)
 }
 \description{
-add_flags() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add flags. Function argument records_ls specifies the object to be updated. The function returns Records (a list).
+add_flags() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add flags. The function returns Records (a list).
 }
 \keyword{internal}

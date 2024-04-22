@@ -30,6 +30,6 @@ add_prpn_cmprsns(
 Comparision (a tibble)
 }
 \description{
-add_prpn_cmprsns() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add proportion comparisons. Function argument comparison_tb specifies the object to be updated. The function returns Comparision (a tibble).
+add_prpn_cmprsns() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add proportion comparisons. The function returns Comparision (a tibble).
 }
 \keyword{internal}

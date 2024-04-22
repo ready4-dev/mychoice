@@ -36,6 +36,6 @@ predict_mkt_share(
 Predicted share (a double vector)
 }
 \description{
-predict_mkt_share() is a Predict function that makes predictions from data using a specified statistical model. Specifically, this function implements an algorithm to predict market share. The function returns Predicted share (a double vector).
+predict_mkt_share() is a Predict function that applies a model to make predictions. Specifically, this function implements an algorithm to predict market share. The function returns Predicted share (a double vector).
 }
 \keyword{internal}

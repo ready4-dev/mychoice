@@ -30,6 +30,6 @@ add_cut_pnts_cmprsn(
 Proportion comparisons (a list)
 }
 \description{
-add_cut_pnts_cmprsn() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add cut points comparison. Function argument prpn_cmprsns_ls specifies the object to be updated. The function returns Proportion comparisons (a list).
+add_cut_pnts_cmprsn() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add cut points comparison. The function returns Proportion comparisons (a list).
 }
 \keyword{internal}

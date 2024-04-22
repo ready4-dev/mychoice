@@ -54,5 +54,5 @@ add_age_and_area_cmprsns(
 Proportion comparisons (a list)
 }
 \description{
-add_age_and_area_cmprsns() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add age and area comparisons. Function argument prpn_cmprsns_ls specifies the object to be updated. The function returns Proportion comparisons (a list).
+add_age_and_area_cmprsns() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add age and area comparisons. The function returns Proportion comparisons (a list).
 }

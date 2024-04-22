@@ -36,6 +36,6 @@ add_new_choice_cmprsn(
 Analysis (a list)
 }
 \description{
-add_new_choice_cmprsn() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add new choice comparison. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+add_new_choice_cmprsn() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add new choice comparison. The function returns Analysis (a list).
 }
 \keyword{internal}

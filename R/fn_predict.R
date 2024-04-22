@@ -1,5 +1,5 @@
 #' Predict market share
-#' @description predict_mkt_share() is a Predict function that makes predictions from data using a specified statistical model. Specifically, this function implements an algorithm to predict market share. The function returns Predicted share (a double vector).
+#' @description predict_mkt_share() is a Predict function that applies a model to make predictions. Specifically, this function implements an algorithm to predict market share. The function returns Predicted share (a double vector).
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param mdls_ls Models (a list)
 #' @param mdl_params_ls Model parameters (a list)

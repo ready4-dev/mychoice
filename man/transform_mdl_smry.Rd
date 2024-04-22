@@ -39,6 +39,6 @@ transform_mdl_smry(
 Model summary (a tibble)
 }
 \description{
-transform_mdl_smry() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform model summary. Function argument mdl_smry_tb specifies the object to be updated. Argument dce_design_ls provides the object to be updated. The function returns Model summary (a tibble).
+transform_mdl_smry() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform model summary. The function returns Model summary (a tibble).
 }
 \keyword{internal}

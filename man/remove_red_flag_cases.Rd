@@ -27,6 +27,6 @@ remove_red_flag_cases(
 Data (a tibble)
 }
 \description{
-remove_red_flag_cases() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove red flag cases. Function argument data_tb specifies the object to be updated. Argument flags_max_1L_int provides the object to be updated. The function returns Data (a tibble).
+remove_red_flag_cases() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove red flag cases. The function returns Data (a tibble).
 }
 \keyword{internal}

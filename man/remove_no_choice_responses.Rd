@@ -15,6 +15,6 @@ remove_no_choice_responses(responses_tb, choice_card_pfx_1L_chr = "DCE_B")
 Responses (a tibble)
 }
 \description{
-remove_no_choice_responses() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove no choice responses. Function argument responses_tb specifies the object to be updated. Argument choice_card_pfx_1L_chr provides the object to be updated. The function returns Responses (a tibble).
+remove_no_choice_responses() is a Remove function that edits an object, removing a specified element or elements. Specifically, this function implements an algorithm to remove no choice responses. The function returns Responses (a tibble).
 }
 \keyword{internal}

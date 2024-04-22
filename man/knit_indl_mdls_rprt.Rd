@@ -11,7 +11,13 @@ knit_indl_mdls_rprt(indl_mdl_knit_params_ls, path_to_mdl_rprt_tmpl_1L_chr)
 
 \item{path_to_mdl_rprt_tmpl_1L_chr}{Path to model report template (a character vector of length one)}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-knit_indl_mdls_rprt() is a Knit function that knits a rmarkdown file Specifically, this function implements an algorithm to knit individual models report. The function is called for its side effects and does not return a value.
+knit_indl_mdls_rprt() is a Knit function that knits an RMD or Rmarkdown file. Specifically, this function implements an algorithm to knit individual models report. The function is called for its side effects and does not return a value.
+}
+\seealso{
+\code{\link[knitr:knit_expand]{knitr::knit_expand()}} and \code{\link[knitr:knit_child]{knitr::knit_child()}}
 }
 \keyword{internal}

@@ -27,6 +27,6 @@ add_analysis(
 Analysis (a list)
 }
 \description{
-add_analysis() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add analysis. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+add_analysis() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add analysis. The function returns Analysis (a list).
 }
 \keyword{internal}

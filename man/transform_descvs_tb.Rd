@@ -13,6 +13,6 @@ transform_descvs_tb(descvs_tb)
 Transformed descriptives (a tibble)
 }
 \description{
-transform_descvs_tb() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform descriptives tibble. Function argument descvs_tb specifies the object to be updated. The function returns Transformed descriptives (a tibble).
+transform_descvs_tb() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform descriptives tibble. The function returns Transformed descriptives (a tibble).
 }
 \keyword{internal}

@@ -45,6 +45,6 @@ add_cost_comparison(
 Analysis (a list)
 }
 \description{
-add_cost_comparison() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add cost comparison. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+add_cost_comparison() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add cost comparison. The function returns Analysis (a list).
 }
 \keyword{internal}

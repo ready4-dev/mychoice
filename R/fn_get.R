@@ -1,5 +1,5 @@
 #' Get attribute summarys
-#' @description get_att_smrys() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attribute summarys. Function argument dce_design_ls specifies the where to look for the required object. The function returns Return (an output object of multiple potential types).
+#' @description get_att_smrys() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get attribute summarys. The function returns Return (an output object of multiple potential types).
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param return_1L_chr Return (a character vector of length one), Default: 'levels'
 #' @return Return (an output object of multiple potential types)
@@ -24,7 +24,7 @@ get_att_smrys <- function (dce_design_ls, return_1L_chr = "levels")
     return(return_xx)
 }
 #' Get attributes
-#' @description get_atts() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attributes. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Attributes (a character vector).
+#' @description get_atts() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get attributes. The function returns Attributes (a character vector).
 #' @param att_lvls_tb Attribute levels (a tibble)
 #' @param return_1L_chr Return (a character vector of length one), Default: 'all'
 #' @return Attributes (a character vector)
@@ -43,7 +43,7 @@ get_atts <- function (att_lvls_tb, return_1L_chr = "all")
     return(atts_chr)
 }
 #' Get factor attributes dummy variable names
-#' @description get_fctr_atts_dummy_var_nms() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get factor attributes dummy variable names. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Factor attributes dummy variable names (an output object of multiple potential types).
+#' @description get_fctr_atts_dummy_var_nms() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get factor attributes dummy variable names. The function returns Factor attributes dummy variable names (an output object of multiple potential types).
 #' @param att_lvls_tb Attribute levels (a tibble)
 #' @param flatten_1L_lgl Flatten (a logical vector of length one), Default: F
 #' @return Factor attributes dummy variable names (an output object of multiple potential types)
@@ -66,7 +66,7 @@ get_fctr_atts_dummy_var_nms <- function (att_lvls_tb, flatten_1L_lgl = F)
     return(fctr_atts_dummy_var_nms_xx)
 }
 #' Get levels
-#' @description get_lvls() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get levels. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Levels (a list).
+#' @description get_lvls() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get levels. The function returns Levels (a list).
 #' @param att_lvls_tb Attribute levels (a tibble)
 #' @param return_1L_chr Return (a character vector of length one), Default: 'all'
 #' @return Levels (a list)
@@ -84,7 +84,7 @@ get_lvls <- function (att_lvls_tb, return_1L_chr = "all")
     return(lvls_ls)
 }
 #' Get number of choices
-#' @description get_nbr_of_choices() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get number of choices. Function argument choice_sets_ls specifies the where to look for the required object. The function returns Number of choices (an integer vector of length one).
+#' @description get_nbr_of_choices() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get number of choices. The function returns Number of choices (an integer vector of length one).
 #' @param choice_sets_ls Choice sets (a list)
 #' @return Number of choices (an integer vector of length one)
 #' @rdname get_nbr_of_choices
@@ -96,7 +96,7 @@ get_nbr_of_choices <- function (choice_sets_ls)
     return(nbr_of_choices_1L_int)
 }
 #' Get opt out variable name
-#' @description get_opt_out_var_nm() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get opt out variable name. Function argument case_choices_mat specifies the where to look for the required object. The function returns Opt out name (a character vector of length one).
+#' @description get_opt_out_var_nm() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get opt out variable name. The function returns Opt out name (a character vector of length one).
 #' @param case_choices_mat Case choices (a matrix)
 #' @param choice_sets_ls Choice sets (a list)
 #' @return Opt out name (a character vector of length one)
@@ -111,7 +111,7 @@ get_opt_out_var_nm <- function (case_choices_mat, choice_sets_ls)
     return(opt_out_nm_1L_chr)
 }
 #' Get significant concepts
-#' @description get_signft_concepts() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get significant concepts. Function argument att_predn_mdls_ls specifies the where to look for the required object. The function returns Significant concepts (a character vector).
+#' @description get_signft_concepts() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get significant concepts. The function returns Significant concepts (a character vector).
 #' @param att_predn_mdls_ls Attribute prediction models (a list)
 #' @param mdl_params_ls Model parameters (a list)
 #' @param min_threshold_1L_int Minimum threshold (an integer vector of length one), Default: 1

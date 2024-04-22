@@ -30,6 +30,6 @@ add_reported_age_red_flag(
 Data (a tibble)
 }
 \description{
-add_reported_age_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add reported age red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_reported_age_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add reported age red flag. The function returns Data (a tibble).
 }
 \keyword{internal}

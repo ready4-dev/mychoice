@@ -24,6 +24,6 @@ get_signft_concepts(
 Significant concepts (a character vector)
 }
 \description{
-get_signft_concepts() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get significant concepts. Function argument att_predn_mdls_ls specifies the where to look for the required object. The function returns Significant concepts (a character vector).
+get_signft_concepts() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get significant concepts. The function returns Significant concepts (a character vector).
 }
 \keyword{internal}

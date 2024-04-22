@@ -1,5 +1,5 @@
 #' Fit choice model
-#' @description fit_choice_mdl() is a Fit function that fits a model of a specified type to a dataset Specifically, this function implements an algorithm to fit choice model. The function returns Model (a model).
+#' @description fit_choice_mdl() is a Fit function that fits a model of a specified type to a dataset. Specifically, this function implements an algorithm to fit choice model. The function returns Model (a model).
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param records_ls Records (a list)
 #' @param mdl_params_ls Model parameters (a list)

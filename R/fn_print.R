@@ -1,5 +1,5 @@
 #' Print comparison kable
-#' @description print_cmprsn_kbl() is a Print function that prints output to console Specifically, this function implements an algorithm to print comparison kable. The function is called for its side effects and does not return a value.
+#' @description print_cmprsn_kbl() is a Print function that prints output to console. Specifically, this function implements an algorithm to print comparison kable. The function is called for its side effects and does not return a value.
 #' @param cmprsn_tb Comparison (a tibble)
 #' @param caption_1L_chr Caption (a character vector of length one)
 #' @param footnotes_chr Footnotes (a character vector), Default: character(0)
@@ -25,7 +25,7 @@ print_cmprsn_kbl <- function (cmprsn_tb, caption_1L_chr, footnotes_chr = charact
     return(cmprsn_kbl)
 }
 #' Print model summary kable
-#' @description print_mdl_smry_kbl() is a Print function that prints output to console Specifically, this function implements an algorithm to print model summary kable. The function is called for its side effects and does not return a value.
+#' @description print_mdl_smry_kbl() is a Print function that prints output to console. Specifically, this function implements an algorithm to print model summary kable. The function is called for its side effects and does not return a value.
 #' @param tfd_mdl_smry_tb Transformed model summary (a tibble)
 #' @param records_ls Records (a list)
 #' @param caption_1L_chr Caption (a character vector of length one)
@@ -47,7 +47,7 @@ print_mdl_smry_kbl <- function (tfd_mdl_smry_tb, records_ls, caption_1L_chr, foo
     return(mdl_smry_kbl)
 }
 #' Print transformed model summary
-#' @description print_tfd_mdl_smry() is a Print function that prints output to console Specifically, this function implements an algorithm to print transformed model summary. The function is called for its side effects and does not return a value.
+#' @description print_tfd_mdl_smry() is a Print function that prints output to console. Specifically, this function implements an algorithm to print transformed model summary. The function is called for its side effects and does not return a value.
 #' @param model_mdl Model (a model)
 #' @param caption_1L_chr Caption (a character vector of length one)
 #' @param dce_design_ls Discrete choice experiment design (a list)

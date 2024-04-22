@@ -11,7 +11,13 @@ knit_choice_descvs_rprt(choice_descvs_params_ls, path_to_mdl_rprt_tmpl_1L_chr)
 
 \item{path_to_mdl_rprt_tmpl_1L_chr}{Path to model report template (a character vector of length one)}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-knit_choice_descvs_rprt() is a Knit function that knits a rmarkdown file Specifically, this function implements an algorithm to knit choice descriptives report. The function is called for its side effects and does not return a value.
+knit_choice_descvs_rprt() is a Knit function that knits an RMD or Rmarkdown file. Specifically, this function implements an algorithm to knit choice descriptives report. The function is called for its side effects and does not return a value.
+}
+\seealso{
+\code{\link[knitr:knit_expand]{knitr::knit_expand()}} and \code{\link[knitr:knit_child]{knitr::knit_child()}}
 }
 \keyword{internal}

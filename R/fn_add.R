@@ -1,5 +1,5 @@
 #' Add age and area comparisons
-#' @description add_age_and_area_cmprsns() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add age and area comparisons. Function argument prpn_cmprsns_ls specifies the object to be updated. The function returns Proportion comparisons (a list).
+#' @description add_age_and_area_cmprsns() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add age and area comparisons. The function returns Proportion comparisons (a list).
 #' @param prpn_cmprsns_ls Proportion comparisons (a list), Default: list()
 #' @param ds_tb Dataset (a tibble)
 #' @param age_group_var_nms_chr Age group variable names (a character vector), Default: c("der_age_u20", "Age range", "AGE")
@@ -122,7 +122,7 @@ add_age_and_area_cmprsns <- function (prpn_cmprsns_ls = list(), ds_tb, age_group
     return(prpn_cmprsns_ls)
 }
 #' Add analysis
-#' @description add_analysis() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add analysis. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+#' @description add_analysis() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add analysis. The function returns Analysis (a list).
 #' @param analysis_ls Analysis (a list), Default: list()
 #' @param mdls_ls Models (a list)
 #' @param what_chr What (a character vector), Default: c("wtp")
@@ -229,7 +229,7 @@ add_analysis <- function (analysis_ls = list(), mdls_ls, what_chr = c("wtp"),
     return(analysis_ls)
 }
 #' Add attempt duration red flag
-#' @description add_attempt_dur_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add attempt duration red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_attempt_dur_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add attempt duration red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param attempt_dur_min_1L_dbl Attempt duration minimum (a double vector of length one)
 #' @param attempt_dur_var_nm_1L_chr Attempt duration variable name (a character vector of length one)
@@ -248,7 +248,7 @@ add_attempt_dur_red_flag <- function (data_tb, attempt_dur_min_1L_dbl, attempt_d
     return(data_tb)
 }
 #' Add choice models
-#' @description add_choice_mdls() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add choice models. Function argument mdls_ls specifies the object to be updated. The function returns Models (a list).
+#' @description add_choice_mdls() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add choice models. The function returns Models (a list).
 #' @param mdls_ls Models (a list), Default: list()
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param mdl_params_ls Model parameters (a list)
@@ -355,7 +355,7 @@ add_choice_mdls <- function (mdls_ls = list(), dce_design_ls, mdl_params_ls, rec
     return(mdls_ls)
 }
 #' Add cost comparison
-#' @description add_cost_comparison() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add cost comparison. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+#' @description add_cost_comparison() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add cost comparison. The function returns Analysis (a list).
 #' @param analysis_ls Analysis (a list)
 #' @param choices_ls Choices (a list)
 #' @param dce_design_ls Discrete choice experiment design (a list)
@@ -403,7 +403,7 @@ add_cost_comparison <- function (analysis_ls, choices_ls, dce_design_ls, mdls_ls
     return(analysis_ls)
 }
 #' Add country red flag
-#' @description add_country_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add country red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_country_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add country red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param lat_lng_var_nms_chr Lat longitude variable names (a character vector)
 #' @param valid_countries_chr Valid countries (a character vector)
@@ -438,7 +438,7 @@ add_country_red_flag <- function (data_tb, lat_lng_var_nms_chr, valid_countries_
     return(data_tb)
 }
 #' Add cut points comparison
-#' @description add_cut_pnts_cmprsn() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add cut points comparison. Function argument prpn_cmprsns_ls specifies the object to be updated. The function returns Proportion comparisons (a list).
+#' @description add_cut_pnts_cmprsn() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add cut points comparison. The function returns Proportion comparisons (a list).
 #' @param prpn_cmprsns_ls Proportion comparisons (a list), Default: list()
 #' @param cmprsn_nm_1L_chr Comparison name (a character vector of length one)
 #' @param ds_tb Dataset (a tibble)
@@ -458,7 +458,7 @@ add_cut_pnts_cmprsn <- function (prpn_cmprsns_ls = list(), cmprsn_nm_1L_chr, ds_
     return(prpn_cmprsns_ls)
 }
 #' Add design specification
-#' @description add_design_spec() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add design specification. Function argument dce_design_ls specifies the object to be updated. The function returns Discrete choice experiment design (a list).
+#' @description add_design_spec() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add design specification. The function returns Discrete choice experiment design (a list).
 #' @param dce_design_ls Discrete choice experiment design (a list), Default: list()
 #' @param add_choice_cards_1L_lgl Add choice cards (a logical vector of length one), Default: F
 #' @param add_cndt_design_mat Add candidate design (a matrix), Default: F
@@ -629,7 +629,7 @@ add_design_spec <- function (dce_design_ls = list(), add_choice_cards_1L_lgl = F
     return(dce_design_ls)
 }
 #' Add duplicate text red flag
-#' @description add_duplicate_text_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add duplicate text red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_duplicate_text_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add duplicate text red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param unique_by_case_var_nms_chr Unique by case variable names (a character vector)
 #' @return Data (a tibble)
@@ -647,7 +647,7 @@ add_duplicate_text_red_flag <- function (data_tb, unique_by_case_var_nms_chr)
     return(data_tb)
 }
 #' Add email red flag
-#' @description add_email_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add email red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_email_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add email red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param email_var_nm_1L_chr Email variable name (a character vector of length one)
 #' @param email_max_cnstv_digits_1L_int Email maximum consecutive digits (an integer vector of length one)
@@ -668,7 +668,7 @@ add_email_red_flag <- function (data_tb, email_var_nm_1L_chr, email_max_cnstv_di
     return(data_tb)
 }
 #' Add flags
-#' @description add_flags() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add flags. Function argument records_ls specifies the object to be updated. The function returns Records (a list).
+#' @description add_flags() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add flags. The function returns Records (a list).
 #' @param records_ls Records (a list)
 #' @param age_var_nm_1L_chr Age variable name (a character vector of length one), Default: character(0)
 #' @param attempt_dur_min_1L_dbl Attempt duration minimum (a double vector of length one), Default: numeric(0)
@@ -723,7 +723,7 @@ add_flags <- function (records_ls, age_var_nm_1L_chr = character(0), attempt_dur
     return(records_ls)
 }
 #' Add new choice comparison
-#' @description add_new_choice_cmprsn() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add new choice comparison. Function argument analysis_ls specifies the object to be updated. The function returns Analysis (a list).
+#' @description add_new_choice_cmprsn() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add new choice comparison. The function returns Analysis (a list).
 #' @param analysis_ls Analysis (a list)
 #' @param dce_design_ls Discrete choice experiment design (a list)
 #' @param mdl_params_ls Model parameters (a list)
@@ -766,7 +766,7 @@ add_new_choice_cmprsn <- function (analysis_ls, dce_design_ls, mdl_params_ls, ne
     return(analysis_ls)
 }
 #' Add proportion comparisons
-#' @description add_prpn_cmprsns() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add proportion comparisons. Function argument comparison_tb specifies the object to be updated. The function returns Comparision (a tibble).
+#' @description add_prpn_cmprsns() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add proportion comparisons. The function returns Comparision (a tibble).
 #' @param comparison_tb Comparison (a tibble)
 #' @param ds_tb Dataset (a tibble)
 #' @param grouping_var_nms_chr Grouping variable names (a character vector)
@@ -808,7 +808,7 @@ add_prpn_cmprsns <- function (comparison_tb, ds_tb, grouping_var_nms_chr, is_pc_
     return(comparision_tb)
 }
 #' Add qualitative assessment red flag
-#' @description add_qltv_ax_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add qualitative assessment red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_qltv_ax_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add qualitative assessment red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param qltv_ax_red_flag_1L_chr Qualitative assessment red flag (a character vector of length one)
 #' @param qltv_ax_var_nm_1L_chr Qualitative assessment variable name (a character vector of length one)
@@ -826,7 +826,7 @@ add_qltv_ax_red_flag <- function (data_tb, qltv_ax_red_flag_1L_chr, qltv_ax_var_
     return(data_tb)
 }
 #' Add red flag totals
-#' @description add_red_flag_totals() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add red flag totals. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_red_flag_totals() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add red flag totals. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param flags_chr Flags (a character vector)
 #' @param flags_tot_var_nm_1L_chr Flags total variable name (a character vector of length one)
@@ -846,7 +846,7 @@ add_red_flag_totals <- function (data_tb, flags_chr, flags_tot_var_nm_1L_chr)
     return(data_tb)
 }
 #' Add red flags
-#' @description add_red_flags() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add red flags. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_red_flags() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add red flags. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param age_var_nm_1L_chr Age variable name (a character vector of length one), Default: character(0)
 #' @param attempt_dur_min_1L_dbl Attempt duration minimum (a double vector of length one), Default: numeric(0)
@@ -916,7 +916,7 @@ add_red_flags <- function (data_tb, age_var_nm_1L_chr = character(0), attempt_du
     return(data_tb)
 }
 #' Add reported age red flag
-#' @description add_reported_age_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add reported age red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_reported_age_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add reported age red flag. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param date_stamp_var_nm_1L_chr Date stamp variable name (a character vector of length one)
 #' @param dob_var_nm_1L_chr Date of birth variable name (a character vector of length one)
@@ -958,7 +958,7 @@ add_reported_age_red_flag <- function (data_tb, date_stamp_var_nm_1L_chr, dob_va
     return(data_tb)
 }
 #' Add Social Interaction Anxiety Scale totals
-#' @description add_sias_totals() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add social interaction anxiety scale totals. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+#' @description add_sias_totals() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add social interaction anxiety scale totals. The function returns Data (a tibble).
 #' @param data_tb Data (a tibble)
 #' @param itm_prefix_1L_chr Item prefix (a character vector of length one)
 #' @param drvd_var_prefix_1L_chr Derived variable prefix (a character vector of length one)

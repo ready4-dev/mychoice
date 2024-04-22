@@ -51,6 +51,6 @@ add_choice_mdls(
 Models (a list)
 }
 \description{
-add_choice_mdls() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add choice models. Function argument mdls_ls specifies the object to be updated. The function returns Models (a list).
+add_choice_mdls() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add choice models. The function returns Models (a list).
 }
 \keyword{internal}

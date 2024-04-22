@@ -17,6 +17,6 @@ add_red_flag_totals(data_tb, flags_chr, flags_tot_var_nm_1L_chr)
 Data (a tibble)
 }
 \description{
-add_red_flag_totals() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add red flag totals. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_red_flag_totals() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add red flag totals. The function returns Data (a tibble).
 }
 \keyword{internal}

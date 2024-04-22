@@ -12,13 +12,15 @@ Description: Tools for modelling choice behaviours in youth mental health
     the mychoice package has been made available as part of the process of
     testing and documenting the package.  If you have any questions,
     please contact the authors (matthew.hamilton1@monash.edu).
-License: GPL-3 + file LICENSE
+License: GPL-3
 URL: https://ready4-dev.github.io/mychoice/,
     https://github.com/ready4-dev/mychoice, https://www.ready4-dev.com/
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: 
+    knitr,
+    pkgload,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
@@ -34,7 +36,6 @@ Imports:
     idefix,
     janitor,
     kableExtra,
-    knitr,
     lessR,
     lifecycle,
     lubridate,

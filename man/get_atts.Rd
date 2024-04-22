@@ -15,6 +15,6 @@ get_atts(att_lvls_tb, return_1L_chr = "all")
 Attributes (a character vector)
 }
 \description{
-get_atts() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get attributes. Function argument att_lvls_tb specifies the where to look for the required object. The function returns Attributes (a character vector).
+get_atts() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get attributes. The function returns Attributes (a character vector).
 }
 \keyword{internal}

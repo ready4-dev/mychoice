@@ -51,6 +51,6 @@ fit_choice_mdl(
 Model (a model)
 }
 \description{
-fit_choice_mdl() is a Fit function that fits a model of a specified type to a dataset Specifically, this function implements an algorithm to fit choice model. The function returns Model (a model).
+fit_choice_mdl() is a Fit function that fits a model of a specified type to a dataset. Specifically, this function implements an algorithm to fit choice model. The function returns Model (a model).
 }
 \keyword{internal}

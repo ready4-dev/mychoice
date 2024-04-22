@@ -196,7 +196,7 @@ make_candidate_predrs_chr <- function (candidate_predrs_tb, concepts_chr = chara
 #' Make cards html list
 #' @description make_cards_html_ls() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make cards html list. The function is called for its side effects and does not return a value.
 #' @param block_choice_tbs_ls Block choice tibbles (a list)
-#' @return NULL
+#' @return No return value, called for side effects.
 #' @rdname make_cards_html_ls
 #' @export 
 #' @importFrom purrr map pluck
@@ -296,7 +296,7 @@ make_choice_atts <- function (choice_sets_ls, opt_out_var_nm_1L_chr = "opt_out")
 #' @export 
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr filter rename pull select
-#' @importFrom knitr kable
+#' @seealso [knitr::kable()]
 #' @importFrom kableExtra kable_styling column_spec
 #' @keywords internal
 make_choice_card_html <- function (choice_card_tb) 

@@ -17,6 +17,6 @@ add_country_red_flag(data_tb, lat_lng_var_nms_chr, valid_countries_chr)
 Data (a tibble)
 }
 \description{
-add_country_red_flag() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add country red flag. Function argument data_tb specifies the object to be updated. The function returns Data (a tibble).
+add_country_red_flag() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add country red flag. The function returns Data (a tibble).
 }
 \keyword{internal}
